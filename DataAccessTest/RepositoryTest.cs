@@ -9,9 +9,13 @@ namespace DataAccessTest
     public class RepositoryTest
     {
         [Fact]
-        public void Connect()
+        public void ExecuteReader()
         {
-            Assert.True(Repository.Connect());
+            var json = Repository.ExecuteReader<string>(@"select top 10 * from MessageHub.MessageContent as string");
+            foreach(var item in json)
+            {
+                Console.Write(item);
+            }
         }
     }
 }
