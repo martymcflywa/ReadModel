@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataAccess.Data;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Text;
@@ -7,6 +8,21 @@ namespace DataAccess.Event
 {
     public static class EventReader
     {
+        public static IEnumerable<string> Read(IDataSource source, string query)
+        {
+            var sequenceId = -1L;
+            while(true)
+            {
+                var entries = source.ExecuteQuery(query, sequenceId);
+                foreach (EventEntry entry in entries)
+                {
+                    sequenceId = entry.SequenceId;
+                    yield return entry.Message;
+                }
+            }
+        }
+
+        [Obsolete]
         public static IEnumerable<string> Read(string query)
         {
             var lastSequenceId = 0L;
@@ -42,15 +58,5 @@ namespace DataAccess.Event
                 }
             }
         }
-
-        //public static IEnumerable<TResult> Join<TOuter, TInner, TKey, TResult>(
-        //    this IEnumerable<TOuter> outer,
-        //    IEnumerable<TInner> inner,
-        //    Func<TOuter, TKey> outerKeySelector,
-        //    Func<TInner, TKey> innerKeySelector,
-        //    Func<TOuter, TInner, TResult> resultSelector)
-        //{
-
-        //}
     }
 }
