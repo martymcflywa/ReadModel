@@ -19,7 +19,7 @@ namespace DataAccess
                     {
                         while(reader.Read())
                         {
-                            yield return (TSource)reader[1];
+                            yield return (TSource) reader[0];
                         }
                     }
                 }
