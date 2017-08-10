@@ -1,49 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
+using System.Text;
 
-namespace DataAccess
+namespace DataAccess.Event
 {
-    public static class Repository
+    public static class EventReader
     {
-
-        private static SqlDataReader ExecuteReader(string query)
+        public static IEnumerable<string> Read(string query)
         {
-            using (SqlConnection conn = new SqlConnection(SQLHelper.ConnectionString))
+            var lastSequenceId = 0L;
+            while (true)
             {
-                conn.Open();
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        return reader;
-                    }
-                }
-            }
-        }
-
-        public static IEnumerable<string> GetEvents(string query)
-        {
-            var lastSequenceId = default(string);
-
-            while(true)
-            {
-                if(lastSequenceId != null)
-                {
-                    query += "and MessageHub.Message.SequenceId > " + lastSequenceId;
-                }
-
                 using (SqlConnection conn = new SqlConnection(SQLHelper.ConnectionString))
                 {
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
+                        cmd.Parameters.Add(new SqlParameter("@lastSequenceId", lastSequenceId));
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            while(reader.Read())
+                            while (reader.Read())
                             {
-                                lastSequenceId = reader["SequenceId"].ToString();
+                                lastSequenceId = (long) reader["SequenceId"];
                                 yield return reader["Content"].ToString();
                             }
                         }
@@ -63,5 +42,15 @@ namespace DataAccess
                 }
             }
         }
+
+        //public static IEnumerable<TResult> Join<TOuter, TInner, TKey, TResult>(
+        //    this IEnumerable<TOuter> outer,
+        //    IEnumerable<TInner> inner,
+        //    Func<TOuter, TKey> outerKeySelector,
+        //    Func<TInner, TKey> innerKeySelector,
+        //    Func<TOuter, TInner, TResult> resultSelector)
+        //{
+
+        //}
     }
 }
