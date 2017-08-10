@@ -11,11 +11,16 @@ namespace DataAccessTest
         [Fact]
         public void ExecuteReader()
         {
-            var json = Repository.ExecuteReader<string>(@"select top 10 Content from MessageHub.MessageContent as string");
-            foreach(var item in json)
-            {
-                Console.Write(item);
-            }
+            var json = Repository.GetEvents(
+                    "select top 100 MessageHub.Message.SequenceId, Content " +
+                    "from MessageHub.Message " +
+                    "join MessageHub.MessageContent " +
+                    "on MessageHub.Message.SequenceId = MessageHub.MessageContent.SequenceId " +
+                    "where AggregateTypeId = 12 and MessageTypeId = 3 ")
+                .Take(100);
+
+            var list = new List<string>(json);
+            Assert.True(list.Count == 100);
         }
     }
 }
