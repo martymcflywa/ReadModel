@@ -8,7 +8,11 @@ namespace TopCustomer
     {
         public static void Main()
         {
-
+            // get customer events
+            // get loan events
+            // join on CustomerId
+            // order by TranscationDate
+            // store in data structure
         }
     }
 }
