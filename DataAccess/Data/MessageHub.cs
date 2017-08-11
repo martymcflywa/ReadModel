@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
+using System.Text;
 
 namespace DataAccess.Data
 {
-    public class Northwind : BaseSqlSource
+    public class MessageHub : BaseSqlSource
     {
-
-        public Northwind(string connectionString) : base(connectionString)
+        public MessageHub(string connectionString) : base(connectionString)
         {
         }
 
         protected override EventEntry EntrySelector(SqlDataReader reader)
         {
-            return new EventEntry((int)reader[0], (string)reader[3]);
+            return new EventEntry((long)reader["SequenceId"], (string)reader["Content"]);
         }
     }
 }
