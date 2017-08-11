@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TopCustomer.src
+namespace TopCustomer
 {
     public class Program
     {

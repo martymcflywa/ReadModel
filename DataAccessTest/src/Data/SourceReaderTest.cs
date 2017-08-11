@@ -1,5 +1,4 @@
-﻿using Repository;
-using Repository.Data;
+﻿using Repository.Data;
 using System.Collections.Generic;
 using Xunit;
 

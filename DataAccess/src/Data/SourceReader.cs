@@ -1,7 +1,6 @@
-﻿using Repository.Data;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Repository
+namespace Repository.Data
 {
     public static class SourceReader
     {

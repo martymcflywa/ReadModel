@@ -1,4 +1,4 @@
-﻿namespace Repository
+﻿namespace Repository.Data
 {
     public class SourceEntry
     {
