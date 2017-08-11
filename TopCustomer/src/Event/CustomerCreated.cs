@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace TopCustomer.Event
 {
     public class CustomerCreated : IEvent
     {
         public Guid MessageId { get; set; }
+        public Guid AggregateId { get; set; }
         public DateTimeOffset Timestamp { get; set; }
 
         public string FriendlyId { get; set; }
@@ -13,5 +15,8 @@ namespace TopCustomer.Event
         public string MobilePhone { get; set; }
 
         public Guid OriginatingLoanApplicationId { get; set; }
+
+        [JsonIgnore]
+        public Guid CustomerId { get { return AggregateId; } }
     }
 }
