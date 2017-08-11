@@ -13,12 +13,21 @@ namespace TopCustomer.Event
             _connectionString = connectionString;
         }
 
-        public IEnumerable<TSource> Collect<TSource>(string query)
+        public IEnumerable<IEvent> Collect(string query)
         {
             var messageHub = new MessageHub(_connectionString);
             foreach(string item in SourceReader.Read(messageHub, query).Take(200)) // TODO: work out how to segment collection
             {
-                yield return JsonConvert.DeserializeObject<TSource>(item);
+                //var aggregateType = 11;
+                //var messageType = 1;
+
+                if(aggregateType ==1 && messageType == 1)
+                {
+                    yield return JsonConvert.DeserializeObject<CustomerCreated>(item);
+                }
+
+                //throw new Exception("Not implemented");
+                //yield return JsonConvert.DeserializeObject<TSource>(item);
             }
         }
     }
