@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Repository.Data;
+using System.Collections.Generic;
 
 namespace TopCustomer.Event
 {
