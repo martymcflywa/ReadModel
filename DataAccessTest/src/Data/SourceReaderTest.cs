@@ -1,11 +1,11 @@
-﻿using DataAccess.Data;
-using DataAccess.Event;
+﻿using Repository;
+using Repository.Data;
 using System.Collections.Generic;
 using Xunit;
 
-namespace DataAccessTest.Event
+namespace RepositoryTest.Data
 {
-    public class EventReaderTest
+    public class SourceReaderTest
     {
         [Fact]
         public void Northwind_Read()
@@ -20,7 +20,7 @@ namespace DataAccessTest.Event
                 "order by TotalDue desc";
 
             var db = new Northwind(connString);
-            var actual = EventReader
+            var actual = SourceReader
                 .Read(db, query)
                 .Take(100);
             Assert.NotEmpty(actual);
@@ -39,7 +39,7 @@ namespace DataAccessTest.Event
                     "order by MessageHub.Message.SequenceId ";
 
             var db = new MessageHub(connString);
-            var actual = EventReader
+            var actual = SourceReader
                 .Read(db, query)
                 .Take(100);
             var list = new List<string>(actual);

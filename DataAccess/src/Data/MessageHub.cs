@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Text;
+﻿using System.Data.SqlClient;
 
-namespace DataAccess.Data
+namespace Repository.Data
 {
     public class MessageHub : BaseSqlSource
     {
@@ -11,9 +8,9 @@ namespace DataAccess.Data
         {
         }
 
-        protected override EventEntry EntrySelector(SqlDataReader reader)
+        protected override SourceEntry EntrySelector(SqlDataReader reader)
         {
-            return new EventEntry((long)reader["SequenceId"], (string)reader["Content"]);
+            return new SourceEntry((long)reader["SequenceId"], (string)reader["Content"]);
         }
     }
 }

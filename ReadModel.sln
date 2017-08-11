@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{DFE95FF7-559A-4178-944E-3A859DD13E63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "DataAccess\Repository.csproj", "{DFE95FF7-559A-4178-944E-3A859DD13E63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessTest", "DataAccessTest\DataAccessTest.csproj", "{5BDE58FE-1E37-4A17-9C7B-9723E4268336}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryTest", "DataAccessTest\RepositoryTest.csproj", "{5BDE58FE-1E37-4A17-9C7B-9723E4268336}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopCustomer", "TopCustomer\TopCustomer.csproj", "{53C96EB3-506F-4EB2-856A-7031D8A86DB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{5BDE58FE-1E37-4A17-9C7B-9723E4268336}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BDE58FE-1E37-4A17-9C7B-9723E4268336}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BDE58FE-1E37-4A17-9C7B-9723E4268336}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53C96EB3-506F-4EB2-856A-7031D8A86DB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53C96EB3-506F-4EB2-856A-7031D8A86DB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53C96EB3-506F-4EB2-856A-7031D8A86DB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53C96EB3-506F-4EB2-856A-7031D8A86DB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

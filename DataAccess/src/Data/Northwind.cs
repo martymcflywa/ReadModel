@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 
-namespace DataAccess.Data
+namespace Repository.Data
 {
     public class Northwind : BaseSqlSource
     {
@@ -12,9 +9,9 @@ namespace DataAccess.Data
         {
         }
 
-        protected override EventEntry EntrySelector(SqlDataReader reader)
+        protected override SourceEntry EntrySelector(SqlDataReader reader)
         {
-            return new EventEntry((int)reader[0], (string)reader[3]);
+            return new SourceEntry((int)reader[0], (string)reader[3]);
         }
     }
 }

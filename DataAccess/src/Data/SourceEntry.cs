@@ -1,11 +1,11 @@
-﻿namespace DataAccess
+﻿namespace Repository
 {
-    public class EventEntry
+    public class SourceEntry
     {
         public long SequenceId { get; }
         public string Message { get; }
 
-        public EventEntry(long sequenceId, string message)
+        public SourceEntry(long sequenceId, string message)
         {
             SequenceId = sequenceId;
             Message = message;

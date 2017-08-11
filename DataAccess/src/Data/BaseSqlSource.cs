@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 
-namespace DataAccess.Data
+namespace Repository.Data
 {
     public abstract class BaseSqlSource : IDataSource
     {
@@ -15,9 +13,9 @@ namespace DataAccess.Data
             _connectionString = connectionString;
         }
 
-        protected abstract EventEntry EntrySelector(SqlDataReader reader);
+        protected abstract SourceEntry EntrySelector(SqlDataReader reader);
 
-        public IEnumerable<EventEntry> ExecuteQuery(string query, long sequenceId)
+        public IEnumerable<SourceEntry> ExecuteQuery(string query, long sequenceId)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {

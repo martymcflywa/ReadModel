@@ -1,12 +1,9 @@
-﻿using DataAccess.Data;
-using System;
+﻿using Repository.Data;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Text;
 
-namespace DataAccess.Event
+namespace Repository
 {
-    public static class EventReader
+    public static class SourceReader
     {
         public static IEnumerable<string> Read(IDataSource source, string query)
         {
@@ -14,7 +11,7 @@ namespace DataAccess.Event
             while(true)
             {
                 var entries = source.ExecuteQuery(query, sequenceId);
-                foreach (EventEntry entry in entries)
+                foreach (SourceEntry entry in entries)
                 {
                     sequenceId = entry.SequenceId;
                     yield return entry.Message;
