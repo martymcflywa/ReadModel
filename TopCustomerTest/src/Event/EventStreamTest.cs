@@ -1,4 +1,5 @@
-﻿using TopCustomer.Event;
+﻿using System.Collections.Generic;
+using TopCustomer.Event;
 using Xunit;
 
 namespace TopCustomerTest.Event
