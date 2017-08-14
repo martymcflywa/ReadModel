@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ReadModel
 {
-    class Customer
+    public class Customer
     {
         string FirstName;
         string Surname;
@@ -28,6 +28,11 @@ namespace ReadModel
             {
                 PaymentsPerMonthYear.Add(monthYear, new MonthYearPayment(date, amountPaid));
             }
+        }
+
+        public bool HasPaid()
+        {
+            return PaymentsPerMonthYear.Count > 0;
         }
     }
 }

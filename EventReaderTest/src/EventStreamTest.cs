@@ -14,6 +14,7 @@ namespace EventReaderTest
         {
             var connString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
             var selector = new EventElementSelector();
+            var source = new SqlSource(connString, selector);
 
             var query =
                 "select top 100 * " +
@@ -23,7 +24,7 @@ namespace EventReaderTest
                 "where t0.MessageTypeId = 1 and t0.AggregateTypeId = 11 " +
                 "and t0.SequenceId > @sequenceId ";
 
-            var eventStream = new EventStream(connString, selector);
+            var eventStream = new EventStream(source);
             var actual = eventStream.Get(query).Take(100);
             Assert.NotEmpty(actual);
 

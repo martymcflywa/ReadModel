@@ -7,19 +7,24 @@ namespace EventReader.Event
 {
     public class EventStream
     {
-        readonly string _connectionString;
-        IElementSelector _selector;
+        IDataSource Source;
 
-        public EventStream(string connectionString, IElementSelector selector)
+        public EventStream(IDataSource source)
         {
-            _connectionString = connectionString;
-            _selector = selector;
+            Source = source;
         }
 
         public IEnumerable<IEvent> Get(string query)
         {
-            var sqlSource = new SqlSource(_connectionString, _selector);
-            foreach(EventEntry entry in Reader.Read(sqlSource, query)) // TODO: work out how to segment collection
+            foreach(EventEntry entry in Reader.Read(Source, query)) // TODO: work out how to segment collection
+            {
+                yield return DeserializeEntry(entry);
+            }
+        }
+
+        public IEnumerable<IEvent> Get(string query, Dictionary<string, string> parameters)
+        {
+            foreach(EventEntry entry in Reader.Read(Source, query, parameters))
             {
                 yield return DeserializeEntry(entry);
             }

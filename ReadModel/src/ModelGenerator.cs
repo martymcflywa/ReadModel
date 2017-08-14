@@ -9,7 +9,7 @@ namespace ReadModel
     public class ModelGenerator
     {
         EventStream Stream;
-        Dictionary<Guid, Customer> Customers { get; }
+        public Dictionary<Guid, Customer> Customers { get; }
 
         const string CUSTOMER_QUERY =
             "select top 100 * " +
@@ -29,12 +29,12 @@ namespace ReadModel
             "t0.SequenceId > @sequenceId ";
 
         const string CUSTOMER_DETAILS_QUERY =
-            "select top 100 * " +
+            "select * " +
             "from MessageHub.Message as t0 " +
             "join MessageHub.MessageContent as t1 " +
             "on t0.SequenceId = t1.SequenceId " +
             "where t0.MessageTypeId = 1 and t0.AggregateTypeId = 11 and " +
-            "t0.AggregateId = @sequenceId";
+            "t0.AggregateId = @customerId ";
 
 
         public ModelGenerator(EventStream stream)
@@ -48,20 +48,21 @@ namespace ReadModel
             var customerEvents = Stream.Get(CUSTOMER_QUERY).Take(10000);
             var paymentEvents = Stream.Get(REPAYMENT_QUERY).Take(10000);
 
-            foreach(CustomerCreated cc in customerEvents)
+            foreach (CustomerCreated cc in customerEvents)
             {
-                if(!Customers.ContainsKey(cc.CustomerId))
+                var customerId = cc.CustomerId;
+                if (!Customers.ContainsKey(customerId))
                 {
-                    Customers.Add(cc.CustomerId, new Customer(cc.FirstName, cc.Surname));
+                    Customers.Add(customerId, new Customer(cc.FirstName, cc.Surname));
                 }
             }
-            
-            foreach(RepaymentTaken rt in paymentEvents)
-            {
 
-                if (Customers.ContainsKey(rt.CustomerId))
+            foreach (RepaymentTaken rt in paymentEvents)
+            {
+                var customerId = rt.CustomerId;
+                if (Customers.ContainsKey(customerId))
                 {
-                    Customers[rt.CustomerId].AddPayment(rt.Amount, rt.BankingDate);
+                    Customers[customerId].AddPayment(rt.Amount, rt.BankingDate);
                 }
             }
         }
