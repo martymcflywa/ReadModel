@@ -1,13 +1,13 @@
-﻿using Repository.Data;
+﻿using EventReader;
 using System.Collections.Generic;
 using Xunit;
 
-namespace RepositoryTest.Data
+namespace EventReaderTest
 {
-    public class SourceReaderTest
+    public class ReaderTest
     {
         [Fact]
-        public void MessageHub_Read()
+        public void Read()
         {
             var connString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
 
@@ -19,10 +19,10 @@ namespace RepositoryTest.Data
                     "order by MessageHub.Message.SequenceId ";
 
             var selector = new EventElementSelector();
-            var db = new SqlSource(connString, selector);
-            var actual = SourceReader
-                .Read(db, query)
+            var actual = new SqlSource(connString, selector)
+                .Read(query)
                 .Take(100);
+
             var list = new List<EventEntry>(actual);
 
             Assert.NotEmpty(actual);

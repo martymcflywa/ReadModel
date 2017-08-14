@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Repository.Data
+namespace EventReader
 {
     public interface IDataSource
     {

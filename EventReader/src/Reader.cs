@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Repository.Data
+namespace EventReader
 {
-    public static class SourceReader
+    public static class Reader
     {
-        public static IEnumerable<EventEntry> Read(IDataSource source, string query)
+        public static IEnumerable<EventEntry> Read(this IDataSource source, string query)
         {
             var sequenceId = -1L;
             while(true)

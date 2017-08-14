@@ -1,4 +1,4 @@
-﻿namespace Repository.Data
+﻿namespace EventReader
 {
     public class EventEntry
     {

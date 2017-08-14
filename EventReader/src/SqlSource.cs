@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 
-namespace Repository.Data
+namespace EventReader
 {
     public class SqlSource : IDataSource
     {
