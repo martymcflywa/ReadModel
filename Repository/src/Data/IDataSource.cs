@@ -4,6 +4,6 @@ namespace Repository.Data
 {
     public interface IDataSource
     {
-        IEnumerable<SourceEntry> ExecuteQuery(string query, long sequenceId);
+        IEnumerable<EventEntry> ExecuteQuery(string query, long sequenceId);
     }
 }

@@ -20,7 +20,7 @@ namespace TopCustomerTest.Event
                 "and t0.SequenceId > @sequenceId ";
 
             var eventStream = new EventStream(connectionString);
-            var actual = eventStream.Collect<CustomerCreated>(query);
+            var actual = eventStream.Collect(query);
             Assert.NotEmpty(actual);
         }
 
@@ -39,7 +39,7 @@ namespace TopCustomerTest.Event
                 "t0.SequenceId > @sequenceId ";
 
             var eventStream = new EventStream(connectionString);
-            var actual = eventStream.Collect<RepaymentTaken>(query);
+            var actual = eventStream.Collect(query);
             Assert.NotEmpty(actual);
         }
     }

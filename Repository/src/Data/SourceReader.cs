@@ -4,21 +4,21 @@ namespace Repository.Data
 {
     public static class SourceReader
     {
-        public static IEnumerable<string> Read(IDataSource source, string query)
+        public static IEnumerable<EventEntry> Read(IDataSource source, string query)
         {
             var sequenceId = -1L;
             while(true)
             {
                 var entries = source.ExecuteQuery(query, sequenceId);
-                foreach (SourceEntry entry in entries)
+                foreach (EventEntry entry in entries)
                 {
                     sequenceId = entry.SequenceId;
-                    yield return entry.Message;
+                    yield return entry;
                 }
             }
         }
 
-        public static IEnumerable<string> Take(this IEnumerable<string> source, int count)
+        public static IEnumerable<EventEntry> Take(this IEnumerable<EventEntry> source, int count)
         {
             using (var enumerator = source.GetEnumerator())
             {

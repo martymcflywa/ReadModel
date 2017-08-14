@@ -4,18 +4,18 @@ using System.Data.SqlClient;
 
 namespace Repository.Data
 {
-    public abstract class BaseSqlSource : IDataSource
+    public class SqlSource : IDataSource
     {
         public readonly string _connectionString;
+        private IElementSelector Selector;
 
-        public BaseSqlSource(string connectionString)
+        public SqlSource(string connectionString, IElementSelector selector)
         {
             _connectionString = connectionString;
+            Selector = selector;
         }
 
-        protected abstract SourceEntry EntrySelector(SqlDataReader reader);
-
-        public IEnumerable<SourceEntry> ExecuteQuery(string query, long sequenceId)
+        public IEnumerable<EventEntry> ExecuteQuery(string query, long sequenceId)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -30,7 +30,7 @@ namespace Repository.Data
                     {
                         while(reader.Read())
                         {
-                            yield return EntrySelector(reader);
+                            yield return Selector.Select(reader);
                         }
                     }
                 }

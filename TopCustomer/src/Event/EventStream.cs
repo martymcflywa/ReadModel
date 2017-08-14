@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Repository.Data;
+using System;
 using System.Collections.Generic;
 
 namespace TopCustomer.Event
@@ -15,19 +16,35 @@ namespace TopCustomer.Event
 
         public IEnumerable<IEvent> Collect(string query)
         {
-            var messageHub = new MessageHub(_connectionString);
-            foreach(string item in SourceReader.Read(messageHub, query).Take(200)) // TODO: work out how to segment collection
+            var messageHubSelector = new EventElementSelector();
+            var sqlSource = new SqlSource(_connectionString, messageHubSelector);
+            foreach(EventEntry entry in SourceReader.Read(sqlSource, query).Take(200)) // TODO: work out how to segment collection
             {
-                //var aggregateType = 11;
-                //var messageType = 1;
+                yield return DeserializeEntry(entry);
+            }
+        }
 
-                if(aggregateType ==1 && messageType == 1)
-                {
-                    yield return JsonConvert.DeserializeObject<CustomerCreated>(item);
-                }
-
-                //throw new Exception("Not implemented");
-                //yield return JsonConvert.DeserializeObject<TSource>(item);
+        IEvent DeserializeEntry(EventEntry entry)
+        {
+            // customer created
+            if(entry.AggregateTypeId == 11 && entry.MessageTypeId == 1)
+            {
+                return JsonConvert.DeserializeObject<CustomerCreated>(entry.Message);
+            }
+            // loan repayment
+            else if(entry.AggregateTypeId == 12 && (
+                entry.MessageTypeId == 83 ||
+                entry.MessageTypeId == 84 ||
+                entry.MessageTypeId == 85 ||
+                entry.MessageTypeId == 87 ||
+                entry.MessageTypeId == 89 ||
+                entry.MessageTypeId == 92))
+            {
+                return JsonConvert.DeserializeObject<RepaymentTaken>(entry.Message);
+            }
+            else
+            {
+                throw new ArgumentException("This type of message is not implemented.");
             }
         }
     }
