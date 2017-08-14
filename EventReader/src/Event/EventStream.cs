@@ -1,24 +1,25 @@
-﻿using Newtonsoft.Json;
-using Repository.Data;
+﻿using EventReader.Read;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace TopCustomer.Event
+namespace EventReader.Event
 {
     public class EventStream
     {
         readonly string _connectionString;
+        IElementSelector _selector;
 
-        public EventStream(string connectionString)
+        public EventStream(string connectionString, IElementSelector selector)
         {
             _connectionString = connectionString;
+            _selector = selector;
         }
 
-        public IEnumerable<IEvent> Collect(string query)
+        public IEnumerable<IEvent> Get(string query)
         {
-            var messageHubSelector = new EventElementSelector();
-            var sqlSource = new SqlSource(_connectionString, messageHubSelector);
-            foreach(EventEntry entry in SourceReader.Read(sqlSource, query).Take(200)) // TODO: work out how to segment collection
+            var sqlSource = new SqlSource(_connectionString, _selector);
+            foreach(EventEntry entry in Reader.Read(sqlSource, query)) // TODO: work out how to segment collection
             {
                 yield return DeserializeEntry(entry);
             }

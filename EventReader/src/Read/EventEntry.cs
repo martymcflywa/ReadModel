@@ -1,4 +1,4 @@
-﻿namespace EventReader
+﻿namespace EventReader.Read
 {
     public class EventEntry
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 
-namespace EventReader
+namespace EventReader.Read
 {
     public class EventElementSelector : IElementSelector
     {

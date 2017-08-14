@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace EventReader
+namespace EventReader.Read
 {
     public static class Reader
     {
@@ -18,7 +18,7 @@ namespace EventReader
             }
         }
 
-        public static IEnumerable<EventEntry> Take(this IEnumerable<EventEntry> source, int count)
+        public static IEnumerable<TSource> Take<TSource>(this IEnumerable<TSource> source, int count)
         {
             using (var enumerator = source.GetEnumerator())
             {

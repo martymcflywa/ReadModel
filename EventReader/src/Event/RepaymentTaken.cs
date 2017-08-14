@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TopCustomer.Event
+namespace EventReader.Event
 {
     public class RepaymentTaken : IEvent
     {

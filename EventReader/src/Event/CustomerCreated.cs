@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace TopCustomer.Event
+namespace EventReader.Event
 {
     public class CustomerCreated : IEvent
     {

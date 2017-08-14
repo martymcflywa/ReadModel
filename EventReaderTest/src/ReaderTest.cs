@@ -1,4 +1,4 @@
-﻿using EventReader;
+﻿using EventReader.Read;
 using System.Collections.Generic;
 using Xunit;
 
