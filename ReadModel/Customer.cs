@@ -17,16 +17,16 @@ namespace ReadModel
             PaymentsPerMonthYear = new Dictionary<DateTime, MonthYearPayment>();
         }
 
-        public void AddPayment(decimal amountPaid, DateTimeOffset date)
+        public void AddPayment(decimal amountPaid, DateTimeOffset transactionDate)
         {
-            var monthYear = new DateTime(date.Year, date.Month, 1);
+            var monthYear = new DateTime(transactionDate.Year, transactionDate.Month, 1);
             if(PaymentsPerMonthYear.ContainsKey(monthYear))
             {
                 PaymentsPerMonthYear[monthYear].AddPayment(amountPaid);
             }
             else
             {
-                PaymentsPerMonthYear.Add(monthYear, new MonthYearPayment(date, amountPaid));
+                PaymentsPerMonthYear.Add(monthYear, new MonthYearPayment(amountPaid));
             }
         }
 

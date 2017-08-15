@@ -6,12 +6,10 @@ namespace ReadModel
 {
     public class MonthYearPayment
     {
-        DateTimeOffset Date { get; }
         decimal AmountPaid { get; set; }
 
-        public MonthYearPayment(DateTimeOffset date, decimal amountPaid)
+        public MonthYearPayment(decimal amountPaid)
         {
-            Date = date;
             AmountPaid = amountPaid;
         }
 

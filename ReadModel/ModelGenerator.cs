@@ -33,24 +33,24 @@ namespace ReadModel
         public Dictionary<Guid, Customer> GetCustomerModel()
         {
             var customerModel = new Dictionary<Guid, Customer>();
-            var customerEvents = Stream.Get(EventType.CustomerCreated).Take(10000);
-            var paymentEvents = Stream.Get(EventType.RepaymentTaken).Take(10000);
+            var customerEvents = Stream.Get(EventType.CustomerCreated).Take(50000);
+            var paymentEvents = Stream.Get(EventType.RepaymentTaken).Take(50000);
 
-            foreach (CustomerCreated cc in customerEvents)
+            foreach (CustomerCreatedEvent cce in customerEvents)
             {
-                var customerId = cc.CustomerId;
+                var customerId = cce.CustomerId;
                 if (!customerModel.ContainsKey(customerId))
                 {
-                    customerModel.Add(customerId, new Customer(cc.FirstName, cc.Surname));
+                    customerModel.Add(customerId, new Customer(cce.FirstName, cce.Surname));
                 }
             }
 
-            foreach (RepaymentTaken rt in paymentEvents)
+            foreach (IRepaymentEvent re in paymentEvents)
             {
-                var customerId = rt.CustomerId;
+                var customerId = re.CustomerId;
                 if (customerModel.ContainsKey(customerId))
                 {
-                    customerModel[customerId].AddPayment(rt.Amount, rt.BankingDate);
+                    customerModel[customerId].AddPayment(re.Amount, re.GetTransactionDate());
                 }
             }
 

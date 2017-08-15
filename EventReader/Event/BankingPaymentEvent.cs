@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EventReader.Event
 {
-    public class RepaymentTaken : IEvent
+    public class BankingPaymentEvent : IRepaymentEvent
     {
         public Guid MessageId { get; set; }
         public Guid AggregateId { get; set; }
@@ -12,13 +12,18 @@ namespace EventReader.Event
 
         public Guid CustomerId { get; set; }
         public Guid TransactionId { get; set; }
+        public decimal Amount { get; set; }
+
         public int TransactionType { get; set; }
         public DateTimeOffset TransactionDate { get; set; }
-        public DateTime BankingDate { get; set; }
-        public DateTime EffectiveDate { get; set; }
+        public DateTimeOffset BankingDate { get; set; }
+        public DateTimeOffset EffectiveDate { get; set; }
         public bool TransactionCleared { get; set; }
-
-        public decimal Amount { get; set; }
         public decimal Balance { get; set; }
+
+        public DateTimeOffset GetTransactionDate()
+        {
+            return TransactionDate;
+        }
     }
 }

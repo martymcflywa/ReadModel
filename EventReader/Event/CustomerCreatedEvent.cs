@@ -3,7 +3,7 @@ using System;
 
 namespace EventReader.Event
 {
-    public class CustomerCreated : IEvent
+    public class CustomerCreatedEvent : IEvent
     {
         public Guid MessageId { get; set; }
         public Guid AggregateId { get; set; }

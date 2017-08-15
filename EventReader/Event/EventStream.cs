@@ -29,25 +29,28 @@ namespace EventReader.Event
         IEvent DeserializeEntry(EventEntry entry)
         {
             // customer created
-            if(entry.AggregateTypeId == 11 && entry.MessageTypeId == 1)
+            if(entry.AggregateTypeId == 11 && (entry.MessageTypeId == 1 || entry.MessageTypeId == 16))
             {
-                return JsonConvert.DeserializeObject<CustomerCreated>(entry.Message);
+                return JsonConvert.DeserializeObject<CustomerCreatedEvent>(entry.Message);
             }
             // loan repayment
-            else if(entry.AggregateTypeId == 12 && (
-                entry.MessageTypeId == 83 ||
-                entry.MessageTypeId == 84 ||
-                entry.MessageTypeId == 85 ||
-                entry.MessageTypeId == 87 ||
-                entry.MessageTypeId == 89 ||
-                entry.MessageTypeId == 92))
+            if(entry.AggregateTypeId == 12)
             {
-                return JsonConvert.DeserializeObject<RepaymentTaken>(entry.Message);
+                if (entry.MessageTypeId == 83 ||
+                    entry.MessageTypeId == 84 ||
+                    entry.MessageTypeId == 85 ||
+                    entry.MessageTypeId == 87 ||
+                    entry.MessageTypeId == 92)
+                {
+                    return JsonConvert.DeserializeObject<BankingPaymentEvent>(entry.Message);
+                }
+                if(entry.MessageTypeId == 89)
+                {
+                    return JsonConvert.DeserializeObject<DirectDebitRepaymentEvent>(entry.Message);
+                }
+                throw new NotImplementedException("This type of event is not implemented.");
             }
-            else
-            {
-                throw new ArgumentException("This type of message is not implemented.");
-            }
+            throw new NotImplementedException("This type of event is not implemented.");
         }
     }
 }

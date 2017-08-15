@@ -15,7 +15,7 @@ namespace EventReader.Read
             "from MessageHub.Message as t0 " +
             "join MessageHub.MessageContent as t1 " +
             "on t0.SequenceId = t1.SequenceId " +
-            "where t0.MessageTypeId = 1 and t0.AggregateTypeId = 11 and " +
+            "where (t0.MessageTypeId = 1 or t0.MessageTypeId = 16) and t0.AggregateTypeId = 11 and " +
             "t0.SequenceId > @sequenceId ";
 
         const string REPAYMENT_TAKEN_QUERY =
