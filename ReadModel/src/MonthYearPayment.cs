@@ -4,9 +4,9 @@ using System.Text;
 
 namespace ReadModel
 {
-    class MonthYearPayment
+    public class MonthYearPayment
     {
-        DateTimeOffset Date { get; set; }
+        DateTimeOffset Date { get; }
         decimal AmountPaid { get; set; }
 
         public MonthYearPayment(DateTimeOffset date, decimal amountPaid)

@@ -9,7 +9,6 @@ namespace ReadModel
     public class ModelGenerator
     {
         EventStream Stream;
-        public Dictionary<Guid, Customer> Customers { get; }
 
         const string CUSTOMER_QUERY =
             "select top 100 * " +
@@ -40,31 +39,33 @@ namespace ReadModel
         public ModelGenerator(EventStream stream)
         {
             Stream = stream;
-            Customers = new Dictionary<Guid, Customer>();
         }
 
-        public void PopulateModel()
+        public Dictionary<Guid, Customer> GetCustomerModel()
         {
+            var customerModel = new Dictionary<Guid, Customer>();
             var customerEvents = Stream.Get(CUSTOMER_QUERY).Take(10000);
             var paymentEvents = Stream.Get(REPAYMENT_QUERY).Take(10000);
 
             foreach (CustomerCreated cc in customerEvents)
             {
                 var customerId = cc.CustomerId;
-                if (!Customers.ContainsKey(customerId))
+                if (!customerModel.ContainsKey(customerId))
                 {
-                    Customers.Add(customerId, new Customer(cc.FirstName, cc.Surname));
+                    customerModel.Add(customerId, new Customer(cc.FirstName, cc.Surname));
                 }
             }
 
             foreach (RepaymentTaken rt in paymentEvents)
             {
                 var customerId = rt.CustomerId;
-                if (Customers.ContainsKey(customerId))
+                if (customerModel.ContainsKey(customerId))
                 {
-                    Customers[customerId].AddPayment(rt.Amount, rt.BankingDate);
+                    customerModel[customerId].AddPayment(rt.Amount, rt.BankingDate);
                 }
             }
+
+            return customerModel;
         }
     }
 }

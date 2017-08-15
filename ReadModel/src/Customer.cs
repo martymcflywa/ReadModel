@@ -6,9 +6,9 @@ namespace ReadModel
 {
     public class Customer
     {
-        string FirstName;
-        string Surname;
-        Dictionary<DateTime, MonthYearPayment> PaymentsPerMonthYear;
+        public string FirstName { get; }
+        public string Surname { get; }
+        public Dictionary<DateTime, MonthYearPayment> PaymentsPerMonthYear { get; }
 
         public Customer(string firstName, string surname)
         {

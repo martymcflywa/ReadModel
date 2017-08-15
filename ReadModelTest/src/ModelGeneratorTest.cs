@@ -18,8 +18,7 @@ namespace ReadModelTest
             var source = new SqlSource(connectionString, selector);
 
             ModelGenerator generator = new ModelGenerator(new EventStream(source));
-            generator.PopulateModel();
-            var customers = generator.Customers;
+            generator.GetCustomerModel();
         }
     }
 }
