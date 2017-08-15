@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EventReader.Event
+namespace ReadModel.Events
 {
     public interface IEvent
     {

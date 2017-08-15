@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TopCustomer.src.Common
+namespace Bootstrap
 {
+    [Obsolete]
     public class Constants
     {
+        /// <summary>
+        /// Class is obsolete, just keeping around to refer to connection string and queries. To be deleted.
+        /// </summary>
         const string CONNECTION_STRING = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
 
         const string CUSTOMER_QUERY =

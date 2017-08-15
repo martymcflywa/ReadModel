@@ -1,4 +1,5 @@
-﻿using EventReader.Read;
+﻿using EventReader;
+using ReadModel.Events;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;

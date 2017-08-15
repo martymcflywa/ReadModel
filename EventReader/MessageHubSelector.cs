@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 
-namespace EventReader.Read
+namespace EventReader
 {
     public class MessageHubSelector : IElementSelector
     {

@@ -1,12 +1,12 @@
-﻿using EventReader.Read;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using ReadModel.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EventReader.Event
+namespace EventReader
 {
-    public class EventStream
+    public class EventStream : ISerialize
     {
         IDataSource Source;
 
@@ -20,21 +20,15 @@ namespace EventReader.Event
             return Reader.Read(Source, eventType).Select(entry => DeserializeEntry(entry));
         }
 
-        // Might still use this, see comment in ReadModel.ModelGenerator
-        public IEnumerable<IEvent> Get(string query, Dictionary<string, string> parameters)
-        {
-            return Reader.Read(Source, query, parameters).Select(entry => DeserializeEntry(entry));
-        }
-
-        IEvent DeserializeEntry(EventEntry entry)
+        public IEvent DeserializeEntry(EventEntry entry)
         {
             // customer created
-            if(entry.AggregateTypeId == 11 && (entry.MessageTypeId == 1 || entry.MessageTypeId == 16))
+            if (entry.AggregateTypeId == 11 && (entry.MessageTypeId == 1 || entry.MessageTypeId == 16))
             {
                 return JsonConvert.DeserializeObject<CustomerCreatedEvent>(entry.Message);
             }
             // loan repayment
-            if(entry.AggregateTypeId == 12)
+            if (entry.AggregateTypeId == 12)
             {
                 if (entry.MessageTypeId == 83 ||
                     entry.MessageTypeId == 84 ||
@@ -44,7 +38,7 @@ namespace EventReader.Event
                 {
                     return JsonConvert.DeserializeObject<BankingPaymentEvent>(entry.Message);
                 }
-                if(entry.MessageTypeId == 89)
+                if (entry.MessageTypeId == 89)
                 {
                     return JsonConvert.DeserializeObject<DirectDebitRepaymentEvent>(entry.Message);
                 }

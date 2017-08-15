@@ -1,9 +1,7 @@
-﻿using EventReader.Event;
-using EventReader.Read;
-using System;
+﻿using EventReader;
+using ReadModel.Events;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace EventReaderTest

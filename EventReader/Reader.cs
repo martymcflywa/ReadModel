@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using ReadModel.Events;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 
-namespace EventReader.Read
+namespace EventReader
 {
     public static class Reader
     {

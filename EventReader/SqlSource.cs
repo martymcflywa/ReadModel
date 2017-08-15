@@ -1,9 +1,9 @@
-﻿using System;
+﻿using ReadModel.Events;
+using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 
-namespace EventReader.Read
+namespace EventReader
 {
     public class SqlSource : IDataSource
     {

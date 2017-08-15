@@ -1,6 +1,6 @@
 ﻿using System.Data.SqlClient;
 
-namespace EventReader.Read
+namespace EventReader
 {
     public interface IElementSelector
     {

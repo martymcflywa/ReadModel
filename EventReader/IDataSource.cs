@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using ReadModel.Events;
+using System.Collections.Generic;
 
-namespace EventReader.Read
+namespace EventReader
 {
     public interface IDataSource
     {

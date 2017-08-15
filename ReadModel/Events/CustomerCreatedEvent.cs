@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 
-namespace EventReader.Event
+namespace ReadModel.Events
 {
     public class CustomerCreatedEvent : IEvent
     {
@@ -16,7 +15,6 @@ namespace EventReader.Event
 
         public Guid OriginatingLoanApplicationId { get; set; }
 
-        [JsonIgnore]
         public Guid CustomerId { get { return AggregateId; } }
     }
 }

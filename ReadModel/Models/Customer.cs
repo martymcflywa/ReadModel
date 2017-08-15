@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace ReadModel
+namespace ReadModel.Models
 {
     public class Customer
     {

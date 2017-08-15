@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EventReader.Read
+namespace ReadModel.Events
 {
     public enum EventType
     {

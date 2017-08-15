@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EventReader.Event
+namespace ReadModel.Events
 {
-    public class BankingPaymentEvent : IRepaymentEvent
+    public class DirectDebitRepaymentEvent : IRepaymentEvent
     {
         public Guid MessageId { get; set; }
         public Guid AggregateId { get; set; }
@@ -14,16 +14,11 @@ namespace EventReader.Event
         public Guid TransactionId { get; set; }
         public decimal Amount { get; set; }
 
-        public int TransactionType { get; set; }
-        public DateTimeOffset TransactionDate { get; set; }
-        public DateTimeOffset BankingDate { get; set; }
-        public DateTimeOffset EffectiveDate { get; set; }
-        public bool TransactionCleared { get; set; }
-        public decimal Balance { get; set; }
+        public DateTimeOffset ClearingDate { get; set; }
 
         public DateTimeOffset GetTransactionDate()
         {
-            return TransactionDate;
+            return ClearingDate;
         }
     }
 }

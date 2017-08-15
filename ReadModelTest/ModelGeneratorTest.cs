@@ -1,9 +1,5 @@
-﻿using EventReader.Event;
-using EventReader.Read;
+﻿using EventReader;
 using ReadModel;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace ReadModelTest
@@ -15,6 +11,7 @@ namespace ReadModelTest
         {
             ModelGenerator generator = new ModelGenerator(new EventStream());
             var model = generator.GetCustomerModel();
+            // need some validation here that model contains expected data
         }
     }
 }
