@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EventReader.Event
 {
@@ -16,19 +17,13 @@ namespace EventReader.Event
 
         public IEnumerable<IEvent> Get(EventType eventType)
         {
-            foreach(EventEntry entry in Reader.Read(Source, eventType)) // TODO: work out how to segment collection
-            {
-                yield return DeserializeEntry(entry);
-            }
+            return Reader.Read(Source, eventType).Select(entry => DeserializeEntry(entry));
         }
 
         // Might still use this, see comment in ReadModel.ModelGenerator
         public IEnumerable<IEvent> Get(string query, Dictionary<string, string> parameters)
         {
-            foreach(EventEntry entry in Reader.Read(Source, query, parameters))
-            {
-                yield return DeserializeEntry(entry);
-            }
+            return Reader.Read(Source, query, parameters).Select(entry => DeserializeEntry(entry));
         }
 
         IEvent DeserializeEntry(EventEntry entry)
