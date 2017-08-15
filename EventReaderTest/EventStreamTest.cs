@@ -2,6 +2,7 @@
 using EventReader.Read;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -25,7 +26,7 @@ namespace EventReaderTest
                 "and t0.SequenceId > @sequenceId ";
 
             var eventStream = new EventStream(source);
-            var actual = eventStream.Get(query).Take(100);
+            var actual = eventStream.Get(EventType.CustomerCreated).Take(100);
             Assert.NotEmpty(actual);
 
             var list = new List<IEvent>(actual);

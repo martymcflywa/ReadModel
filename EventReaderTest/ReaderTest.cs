@@ -1,5 +1,6 @@
 ﻿using EventReader.Read;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace EventReaderTest
@@ -11,16 +12,9 @@ namespace EventReaderTest
         {
             var connString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
 
-            var query =
-                    "select top 100 * " +
-                    "from MessageHub.Message " +
-                    "join MessageHub.MessageContent on MessageHub.Message.SequenceId = MessageHub.MessageContent.SequenceId " +
-                    "where MessageHub.Message.AggregateTypeId = 12 and MessageHub.Message.MessageTypeId = 3 and MessageHub.Message.SequenceId > @sequenceId " +
-                    "order by MessageHub.Message.SequenceId ";
-
             var selector = new EventElementSelector();
             var actual = new SqlSource(connString, selector)
-                .Read(query)
+                .Read(EventType.CustomerCreated)
                 .Take(100);
 
             var list = new List<EventEntry>(actual);

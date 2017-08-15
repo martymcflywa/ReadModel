@@ -2,7 +2,7 @@
 using EventReader.Read;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace ReadModel
 {
@@ -10,23 +10,13 @@ namespace ReadModel
     {
         EventStream Stream;
 
-        const string CUSTOMER_QUERY =
-            "select top 100 * " +
-            "from MessageHub.Message as t0 " +
-            "join MessageHub.MessageContent as t1 " +
-            "on t0.SequenceId = t1.SequenceId " +
-            "where t0.MessageTypeId = 1 and t0.AggregateTypeId = 11 " +
-            "and t0.SequenceId > @sequenceId ";
-
-        const string REPAYMENT_QUERY =
-            "select top 100 * " +
-            "from MessageHub.Message as t0 " +
-            "join MessageHub.MessageContent as t1 " +
-            "on t0.sequenceId = t1.sequenceId " +
-            "where MessageTypeId in (83, 84, 85, 87, 89, 92) and " +
-            "t0.AggregateTypeId = 12 and " +
-            "t0.SequenceId > @sequenceId ";
-
+        // TODO: might still use CUSTOMER_DETAILS_QUERY below...
+        // IDEA: Rather than build a separate stream of CustomerCreated and RepaymentTaken events...
+            // Iterate each RepaymentTaken event
+                // If Customer doesn't exist in CustomerModel
+                    // Call Stream.Get() to retrieve single CustomerCreated event, where PaymentEvent.CustomerId == AggregateId
+                    // Create new Customer and add to CustomerModel
+                // Add payment to Customer
         const string CUSTOMER_DETAILS_QUERY =
             "select * " +
             "from MessageHub.Message as t0 " +
@@ -34,7 +24,6 @@ namespace ReadModel
             "on t0.SequenceId = t1.SequenceId " +
             "where t0.MessageTypeId = 1 and t0.AggregateTypeId = 11 and " +
             "t0.AggregateId = @customerId ";
-
 
         public ModelGenerator(EventStream stream)
         {
@@ -44,8 +33,8 @@ namespace ReadModel
         public Dictionary<Guid, Customer> GetCustomerModel()
         {
             var customerModel = new Dictionary<Guid, Customer>();
-            var customerEvents = Stream.Get(CUSTOMER_QUERY).Take(10000);
-            var paymentEvents = Stream.Get(REPAYMENT_QUERY).Take(10000);
+            var customerEvents = Stream.Get(EventType.CustomerCreated).Take(10000);
+            var paymentEvents = Stream.Get(EventType.RepaymentTaken).Take(10000);
 
             foreach (CustomerCreated cc in customerEvents)
             {
