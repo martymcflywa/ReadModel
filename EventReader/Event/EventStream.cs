@@ -10,9 +10,9 @@ namespace EventReader.Event
     {
         IDataSource Source;
 
-        public EventStream(IDataSource source)
+        public EventStream()
         {
-            Source = source;
+            Source = new SqlSource();
         }
 
         public IEnumerable<IEvent> Get(EventType eventType)

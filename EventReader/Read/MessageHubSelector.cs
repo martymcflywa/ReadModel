@@ -3,7 +3,7 @@ using System.Data.SqlClient;
 
 namespace EventReader.Read
 {
-    public class EventElementSelector : IElementSelector
+    public class MessageHubSelector : IElementSelector
     {
         public EventEntry Select(SqlDataReader reader)
         {

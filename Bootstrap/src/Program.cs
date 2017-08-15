@@ -11,10 +11,7 @@ namespace Bootstrap
     {
         public static void Main()
         {
-            var connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
-            var selector = new EventElementSelector();
-            var source = new SqlSource(connectionString, selector);
-            var generator = new ModelGenerator(new EventStream(source));
+            var generator = new ModelGenerator(new EventStream());
             var customerModel = generator.GetCustomerModel();
 
             foreach(var item in customerModel)

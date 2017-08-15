@@ -7,8 +7,8 @@ namespace EventReader.Read
 {
     public class SqlSource : IDataSource
     {
-        readonly string _connectionString;
-        IElementSelector Selector;
+        const string CONNECTION_STRING = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
+        IElementSelector Selector = new MessageHubSelector();
 
         const string CUSTOMER_CREATED_QUERY =
             "select top 100 * " +
@@ -27,15 +27,9 @@ namespace EventReader.Read
             "t0.AggregateTypeId = 12 and " +
             "t0.SequenceId > @sequenceId ";
 
-        public SqlSource(string connectionString, IElementSelector selector)
-        {
-            _connectionString = connectionString;
-            Selector = selector;
-        }
-
         public IEnumerable<EventEntry> ExecuteQuery(EventType eventType, long sequenceId)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING))
             {
                 connection.Open();
                 SqlCommand command = CreateCommand(eventType, connection);
@@ -68,12 +62,9 @@ namespace EventReader.Read
 
         public IEnumerable<EventEntry> ExecuteQuery(string query, Dictionary<string, string> parameters)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING))
             {
-                if(connection.State == ConnectionState.Closed)
-                {
-                    connection.Open();
-                }
+                connection.Open();
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     if(parameters != null)

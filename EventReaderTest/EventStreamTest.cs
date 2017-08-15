@@ -13,19 +13,7 @@ namespace EventReaderTest
         [Fact]
         public void GetCustomerCreated()
         {
-            var connString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
-            var selector = new EventElementSelector();
-            var source = new SqlSource(connString, selector);
-
-            var query =
-                "select top 100 * " +
-                "from MessageHub.Message as t0 " +
-                "join MessageHub.MessageContent as t1 " +
-                "on t0.SequenceId = t1.SequenceId " +
-                "where t0.MessageTypeId = 1 and t0.AggregateTypeId = 11 " +
-                "and t0.SequenceId > @sequenceId ";
-
-            var eventStream = new EventStream(source);
+            var eventStream = new EventStream();
             var actual = eventStream.Get(EventType.CustomerCreated).Take(100);
             Assert.NotEmpty(actual);
 

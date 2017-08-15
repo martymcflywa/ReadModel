@@ -10,10 +10,7 @@ namespace EventReaderTest
         [Fact]
         public void Read()
         {
-            var connString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
-
-            var selector = new EventElementSelector();
-            var actual = new SqlSource(connString, selector)
+            var actual = new SqlSource()
                 .Read(EventType.CustomerCreated)
                 .Take(100);
 

@@ -13,11 +13,7 @@ namespace ReadModelTest
         [Fact]
         public void PopulateModel()
         {
-            var connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
-            var selector = new EventElementSelector();
-            var source = new SqlSource(connectionString, selector);
-
-            ModelGenerator generator = new ModelGenerator(new EventStream(source));
+            ModelGenerator generator = new ModelGenerator(new EventStream());
             var model = generator.GetCustomerModel();
         }
     }
