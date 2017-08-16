@@ -21,6 +21,11 @@ namespace ReadModel.Events
         public bool TransactionCleared { get; set; }
         public decimal Balance { get; set; }
 
+        public Guid GetCustomerId()
+        {
+            return CustomerId;
+        }
+
         public DateTimeOffset GetTransactionDate()
         {
             return TransactionDate;

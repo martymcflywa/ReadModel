@@ -16,6 +16,11 @@ namespace ReadModel.Events
 
         public DateTimeOffset ClearingDate { get; set; }
 
+        public Guid GetCustomerId()
+        {
+            return CustomerId;
+        }
+
         public DateTimeOffset GetTransactionDate()
         {
             return ClearingDate;

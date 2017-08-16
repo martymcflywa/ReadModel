@@ -15,6 +15,9 @@ namespace ReadModel.Events
 
         public Guid OriginatingLoanApplicationId { get; set; }
 
-        public Guid CustomerId { get { return AggregateId; } }
+        public Guid GetCustomerId()
+        {
+            return AggregateId;
+        }
     }
 }

@@ -5,33 +5,27 @@ namespace ReadModel.Models
 {
     public class Customer
     {
-        public string FirstName { get; }
-        public string Surname { get; }
-        public Dictionary<DateTime, MonthYearPayment> PaymentsPerMonthYear { get; }
+        public string FirstName { get; private set; }
+        public string Surname { get; private set; }
+        public decimal AmountPaid { get; private set; }
 
         public Customer(string firstName, string surname)
         {
             FirstName = firstName;
             Surname = surname;
-            PaymentsPerMonthYear = new Dictionary<DateTime, MonthYearPayment>();
+            AmountPaid = 0;
         }
 
-        public void AddPayment(decimal amountPaid, DateTimeOffset transactionDate)
+        public Customer(string firstName, string surname, decimal amountPaid)
         {
-            var monthYear = new DateTime(transactionDate.Year, transactionDate.Month, 1);
-            if(PaymentsPerMonthYear.ContainsKey(monthYear))
-            {
-                PaymentsPerMonthYear[monthYear].AddPayment(amountPaid);
-            }
-            else
-            {
-                PaymentsPerMonthYear.Add(monthYear, new MonthYearPayment(amountPaid));
-            }
+            FirstName = firstName;
+            Surname = surname;
+            AmountPaid = amountPaid;
         }
 
-        public bool HasPaid()
+        public void AddPayment(decimal amountPaid)
         {
-            return PaymentsPerMonthYear.Count > 0;
+            AmountPaid += amountPaid;
         }
     }
 }

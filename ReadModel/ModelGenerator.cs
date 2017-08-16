@@ -15,31 +15,39 @@ namespace ReadModel
             Stream = stream;
         }
 
-        public Dictionary<Guid, Customer> GetCustomerModel()
+        // TODO: Target = ModelGenerator#Build(IEnumerable<IEvent> events)
+        // IDEA: Current approach Build() does join on payment events with customer events on customerId
+                // New approach: Do join in SQL. Every payment brings customer created event with it
+                // Will only have to deal with single stream
+
+        public Dictionary<DateTime, PaymentsByMonth> Build()
         {
-            var customerModel = new Dictionary<Guid, Customer>();
+            var model = new Dictionary<DateTime, PaymentsByMonth>();
             var customerEvents = Stream.Get(EventType.CustomerCreated).Take(10000);
             var paymentEvents = Stream.Get(EventType.RepaymentTaken).Take(10000);
 
-            foreach (CustomerCreatedEvent cce in customerEvents)
-            {
-                var customerId = cce.CustomerId;
-                if (!customerModel.ContainsKey(customerId))
-                {
-                    customerModel.Add(customerId, new Customer(cce.FirstName, cce.Surname));
-                }
-            }
+            // TODO: this probably needs improvement, replace Tuple with another model? Maybe a function that populates the model.
+            var customerPayments = paymentEvents.Join(customerEvents, pe => pe.GetCustomerId(), ce => ce.GetCustomerId(), Tuple.Create);
 
-            foreach (IRepaymentEvent re in paymentEvents)
+            foreach(var payment in customerPayments)
             {
-                var customerId = re.CustomerId;
-                if (customerModel.ContainsKey(customerId))
+                var year = new DateTime(((IRepaymentEvent)payment.Item1).GetTransactionDate().Year, 1, 1);
+                if(!model.ContainsKey(year))
                 {
-                    customerModel[customerId].AddPayment(re.Amount, re.GetTransactionDate());
+                    model.Add(year, new PaymentsByMonth());
                 }
+                model[year].Add((IRepaymentEvent) payment.Item1, (CustomerCreatedEvent)payment.Item2);
             }
+            return model;
+        }
 
-            return customerModel;
+        public Dictionary<DateTime, Customer> GetHighestPayingCustomerFor(Dictionary<DateTime, PaymentsByMonth> model, DateTime year)
+        {
+            if(model.ContainsKey(year))
+            {
+                return model[year].GetHighestPayingCustomer();
+            }
+            throw new ArgumentOutOfRangeException("No payments made for " + year.Year.ToString());
         }
     }
 }

@@ -9,5 +9,7 @@ namespace ReadModel.Events
         Guid MessageId { get; set; }
         Guid AggregateId { get; set; }
         DateTimeOffset Timestamp { get; set; }
+
+        Guid GetCustomerId();
     }
 }
