@@ -15,5 +15,10 @@ namespace ReadModelTest
             var winners = generator.GetHighestPayingCustomerFor(model, new DateTime(2016, 1, 1));
             // need some validation here that model contains expected data
         }
+
+        public void TargetBuildSignature()
+        {
+            //var model = new ModelGenerator().Build(new EventStream().Get());
+        }
     }
 }

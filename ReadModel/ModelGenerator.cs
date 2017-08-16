@@ -27,8 +27,8 @@ namespace ReadModel
         public Dictionary<DateTime, PaymentsByMonth> Build()
         {
             var model = new Dictionary<DateTime, PaymentsByMonth>();
-            var customerEvents = Stream.Get(EventType.CustomerCreated).Take(10000);
-            var paymentEvents = Stream.Get(EventType.RepaymentTaken).Take(10000);
+            var customerEvents = Stream.Get(EventType.CustomerCreated).Take(200000);
+            var paymentEvents = Stream.Get(EventType.RepaymentTaken).Take(200000);
 
             // TODO: this probably needs improvement, replace Tuple with another model? Maybe a function that populates the model.
             var customerPayments = paymentEvents.Join(customerEvents, pe => pe.GetCustomerId(), ce => ce.GetCustomerId(), Tuple.Create);
