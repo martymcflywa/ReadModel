@@ -17,8 +17,12 @@ namespace ReadModel
 
         // TODO: Target = ModelGenerator#Build(IEnumerable<IEvent> events)
         // IDEA: Current approach Build() does join on payment events with customer events on customerId
-                // New approach: Do join in SQL. Every payment brings customer created event with it
-                // Will only have to deal with single stream
+        // New approach: Do join in SQL. Every payment brings customer created event with it
+        // Will only have to deal with single stream
+        public Dictionary<DateTime, PaymentsByMonth> Build(IEnumerable<IEvent> events)
+        {
+            return default(Dictionary<DateTime, PaymentsByMonth>);
+        }
 
         public Dictionary<DateTime, PaymentsByMonth> Build()
         {
