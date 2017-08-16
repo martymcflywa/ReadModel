@@ -1,5 +1,8 @@
 ﻿using EventReader;
 using ReadModel;
+using ReadModel.Models;
+using System;
+using System.Collections.Generic;
 
 namespace Bootstrap
 {
@@ -9,7 +12,16 @@ namespace Bootstrap
         {
             var generator = new ModelGenerator(new EventStream());
             var model = generator.Build();
-            // figure out who the highest paying customer is per month
+            var winners = generator.GetHighestPayingCustomerFor(model, new DateTime(2016, 1, 1));
+
+            foreach(KeyValuePair<DateTime, Customer> customer in winners)
+            {
+                Console.WriteLine(
+                    "Highest paying customer for " + 
+                    customer.Key.Year + "-" + customer.Key.Month.ToString() + " " + 
+                    customer.Value.FirstName + " " + customer.Value.Surname + " " +
+                    "$" + customer.Value.AmountPaid);
+            }
         }
     }
 }
