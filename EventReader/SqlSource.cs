@@ -11,7 +11,7 @@ namespace EventReader
         IElementSelector Selector = new MessageHubSelector();
 
         const string CUSTOMER_CREATED_QUERY =
-            "select top 100000 * " +
+            "select top 10000 * " +
             "from MessageHub.Message as t0 " +
             "join MessageHub.MessageContent as t1 " +
             "on t0.SequenceId = t1.SequenceId " +
@@ -19,7 +19,7 @@ namespace EventReader
             "t0.SequenceId > @sequenceId ";
 
         const string REPAYMENT_TAKEN_QUERY =
-            "select top 100000 * " +
+            "select top 10000 * " +
             "from MessageHub.Message as t0 " +
             "join MessageHub.MessageContent as t1 " +
             "on t0.sequenceId = t1.sequenceId " +
