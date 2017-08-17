@@ -1,84 +1,51 @@
-﻿using ReadModel.Events;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 
 namespace EventReader
 {
     public class SqlSource : IDataSource
     {
-        const string CONNECTION_STRING = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
-        IElementSelector Selector = new MessageHubSelector();
+        private readonly string _connectionString;
+        private readonly IElementSelector _selector;
 
-        const string CUSTOMER_CREATED_QUERY =
-            "select top 10000 * " +
+        private const string CustomersAndRepaymentsQuery =
+            "select top 1000 t0.SequenceId, t0.AggregateTypeId, t0.MessageTypeId, t1.SequenceId as SequenceId, t1.Content " +
             "from MessageHub.Message as t0 " +
-            "join MessageHub.MessageContent as t1 " +
-            "on t0.SequenceId = t1.SequenceId " +
-            "where (t0.MessageTypeId = 1 or t0.MessageTypeId = 16) and t0.AggregateTypeId = 11 and " +
-            "t0.SequenceId > @sequenceId ";
+            "inner join MessageHub.MessageContent as t1 on t0.SequenceId = t1.SequenceId " +
+            // customer created or imported
+            "where (t0.AggregateTypeId = 11 and t0.MessageTypeId in (1, 16)) or " +
+            // loan repayment
+            "(t0.AggregateTypeId = 12 and t0.MessageTypeId in (83, 84, 85, 87, 89, 92)) and " +
+            "t0.SequenceId > @sequenceId " +
+            "order by t0.SequenceId ";
 
-        const string REPAYMENT_TAKEN_QUERY =
-            "select top 10000 * " +
-            "from MessageHub.Message as t0 " +
-            "join MessageHub.MessageContent as t1 " +
-            "on t0.sequenceId = t1.sequenceId " +
-            "where MessageTypeId in (83, 84, 85, 87, 89, 92) and " +
-            "t0.AggregateTypeId = 12 and " +
-            "t0.SequenceId > @sequenceId ";
-
-        public IEnumerable<EventEntry> ExecuteQuery(EventType eventType, long sequenceId)
+        public SqlSource()
         {
-            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING))
+            // default for now
+            _connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
+            _selector = new MessageHubSelector();
+        }
+
+        public SqlSource(string connectionString)
+        {
+            _connectionString = connectionString;
+            _selector = new MessageHubSelector();
+        }
+
+        public IEnumerable<EventEntry> ExecuteQuery(long sequenceId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = CreateCommand(eventType, connection);
+                var command = new SqlCommand(CustomersAndRepaymentsQuery, connection);
                 using (command)
                 {
                     command.Parameters.Add(new SqlParameter("@sequenceId", sequenceId));
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (var reader = command.ExecuteReader())
                     {
-                        while(reader.Read())
+                        while (reader.Read())
                         {
-                            yield return Selector.Select(reader);
-                        }
-                    }
-                }
-            }
-        }
-
-        SqlCommand CreateCommand(EventType eventType, SqlConnection connection)
-        {
-            switch (eventType)
-            {
-                case EventType.CustomerCreated:
-                    return new SqlCommand(CUSTOMER_CREATED_QUERY, connection);
-                case EventType.RepaymentTaken:
-                    return new SqlCommand(REPAYMENT_TAKEN_QUERY, connection);
-                default:
-                    throw new NotImplementedException("Unsupported EventType.");
-            }
-        }
-
-        public IEnumerable<EventEntry> ExecuteQuery(string query, Dictionary<string, string> parameters)
-        {
-            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING))
-            {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    if(parameters != null)
-                    {
-                        foreach(var item in parameters)
-                        {
-                            command.Parameters.Add(new SqlParameter(item.Key, item.Value));
-                        }
-                    }
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while(reader.Read())
-                        {
-                            yield return Selector.Select(reader);
+                            yield return _selector.Select(reader);
                         }
                     }
                 }

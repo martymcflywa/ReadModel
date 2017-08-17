@@ -12,8 +12,8 @@ namespace EventReaderTest
         public void Read()
         {
             var actual = new SqlSource()
-                .Read(EventType.CustomerCreated)
-                .Take(100);
+                .Read()
+                .TakeWhile(e => e.SequenceId < 100);
 
             var list = new List<EventEntry>(actual);
 

@@ -12,7 +12,10 @@ namespace EventReaderTest
         public void GetCustomerCreated()
         {
             var eventStream = new EventStream();
-            var actual = eventStream.Get(EventType.CustomerCreated).Take(100);
+            var actual = eventStream
+                .Get()
+                .Take(100);
+
             Assert.NotEmpty(actual);
 
             var list = new List<IEvent>(actual);

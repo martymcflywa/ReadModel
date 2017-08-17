@@ -8,17 +8,18 @@ namespace EventReader
 {
     public class EventStream : ISerialize
     {
-        IDataSource Source;
+        private readonly IDataSource _source;
 
         public EventStream()
         {
-            Source = new SqlSource();
+            _source = new SqlSource();
         }
 
-        public IEnumerable<IEvent> Get(EventType eventType)
+        public IEnumerable<IEvent> Get()
         {
-            return Reader.Read(Source, eventType).Select(entry => DeserializeEntry(entry));
+            return _source.Read().Select(DeserializeEntry);
         }
+
 
         public IEvent DeserializeEntry(EventEntry entry)
         {
