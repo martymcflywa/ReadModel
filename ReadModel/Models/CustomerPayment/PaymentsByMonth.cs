@@ -1,9 +1,8 @@
-﻿using ReadModel.Events;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using ReadModel.Events;
 
-namespace ReadModel.Models
+namespace ReadModel.Models.CustomerPayment
 {
     public class PaymentsByMonth
     {

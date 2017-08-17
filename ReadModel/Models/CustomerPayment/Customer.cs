@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ReadModel.Models
+﻿namespace ReadModel.Models.CustomerPayment
 {
     public class Customer
     {

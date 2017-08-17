@@ -1,18 +1,18 @@
 ﻿using ReadModel.Events;
-using ReadModel.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ReadModel.Models.CustomerPayment;
 
 namespace ReadModel
 {
     public class ModelGenerator
     {
-        IEventStream Stream;
+        readonly IEventStream _stream;
 
         public ModelGenerator(IEventStream stream)
         {
-            Stream = stream;
+            _stream = stream;
         }
 
         // TODO: Target = ModelGenerator#Build(IEnumerable<IEvent> events)
@@ -27,8 +27,8 @@ namespace ReadModel
         public Dictionary<DateTime, PaymentsByMonth> Build()
         {
             var model = new Dictionary<DateTime, PaymentsByMonth>();
-            var customerEvents = Stream.Get(EventType.CustomerCreated).Take(200000);
-            var paymentEvents = Stream.Get(EventType.RepaymentTaken).Take(200000);
+            var customerEvents = _stream.Get(EventType.CustomerCreated).Take(200000);
+            var paymentEvents = _stream.Get(EventType.RepaymentTaken).Take(200000);
 
             // TODO: this probably needs improvement, replace Tuple with another model? Maybe a function that populates the model.
             var customerPayments = paymentEvents.Join(customerEvents, pe => pe.GetCustomerId(), ce => ce.GetCustomerId(), Tuple.Create);
