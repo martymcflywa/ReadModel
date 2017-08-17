@@ -6,6 +6,8 @@ namespace ReadModel.Events
 {
     public class DirectDebitRepaymentEvent : IRepaymentEvent
     {
+        public long SequenceId { get; set; }
+        public EventKey Key { get; set; }
         public Guid MessageId { get; set; }
         public Guid AggregateId { get; set; }
         public DateTimeOffset Timestamp { get; set; }
