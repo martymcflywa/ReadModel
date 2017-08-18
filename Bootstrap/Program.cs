@@ -10,10 +10,13 @@ namespace Bootstrap
     {
         public static void Main()
         {
-            var stream = new EventStream();
-            var builder = new ModelBuilder();
-            builder.Build(stream.Get());
-            var winners = builder.GetHighestPayingCustomerFor(new DateTime(2016, 1, 1));
+            const int startSequenceId = 11926;
+            const int limit = 100000;
+            var dispatcher = new SqlEventDispatcher();
+            var processor = new PaymentsByCustomerByDateProcessor();
+            processor.Register(dispatcher);
+            dispatcher.Process(startSequenceId);
+            var winners = processor.GetHighestPayingCustomerFor(new DateTime(2016, 1, 1));
         }
     }
 }

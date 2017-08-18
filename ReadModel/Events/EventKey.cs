@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ReadModel.Events
 {
-    public class EventKey
+    public class EventKey : IEquatable<EventKey>
     {
         public short AggregateTypeId { get; }
         public short MessageTypeId { get; }
@@ -13,6 +13,18 @@ namespace ReadModel.Events
         {
             AggregateTypeId = aggregateTypeId;
             MessageTypeId = messageTypeId;
+        }
+
+        public override int GetHashCode()
+        {
+            return (AggregateTypeId + MessageTypeId).GetHashCode();
+        }
+
+        public bool Equals(EventKey other)
+        {
+            return other != null &&
+                   other.AggregateTypeId == AggregateTypeId &&
+                   other.MessageTypeId == MessageTypeId;
         }
     }
 }
