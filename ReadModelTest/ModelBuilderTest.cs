@@ -17,7 +17,7 @@ namespace ReadModelTest
             var processor = new PaymentsByCustomerByDateProcessor();
             processor.Register(dispatcher);
             dispatcher.Process();
-            var winners = processor.GetHighestPayingCustomerFor(year);
+            var winners = processor.GetHighestPayingCustomers();
             // need some validation here that model contains expected data
         }
 
@@ -31,7 +31,7 @@ namespace ReadModelTest
             var processor = new PaymentsByCustomerByDateProcessor();
             processor.Register(dispatcher);
             dispatcher.Process(startSequenceId, limit);
-            var winners = processor.GetHighestPayingCustomerFor(year);
+            var winners = processor.GetHighestPayingCustomers();
         }
     }
 }

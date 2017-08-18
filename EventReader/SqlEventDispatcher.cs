@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace EventReader
 {
+    // TODO: to become generic dispatcher, Dispatch(IEnumerable<IEvents> events), rename!
     public class SqlEventDispatcher : IEventRegister
     {
         private readonly IDataSource _source;
@@ -13,6 +14,7 @@ namespace EventReader
 
         public SqlEventDispatcher()
         {
+            // TODO: remove dependency of sources
             _source = new SqlSource();
             _eventRegister = new Dictionary<EventKey, Action<object>>();
         }
@@ -22,6 +24,7 @@ namespace EventReader
             _eventRegister[new EventKey(aggregateTypeId, messageTypeId)] = e => eventHandler((T) e);
         }
 
+        // TODO: Move this out of dispatcher
         public void Process()
         {
             Dispatch(_source.Read().Select(DeserializeEntry));
@@ -37,6 +40,8 @@ namespace EventReader
             Dispatch(_source.Read(startSequenceId).Select(DeserializeEntry).TakeWhile(e => e.SequenceId < endSequenceId));
         }
 
+
+        // TODO: make public 
         private void Dispatch(IEnumerable<IEvent> events)
         {
             foreach (var e in events)
@@ -46,6 +51,13 @@ namespace EventReader
             }
         }
 
+        // TODO: implement this
+        //public IEvent DeserializeEntry()
+        //{
+            // call actual deserializing here
+            // then add metadata once
+        //}
+        // make this private
         public IEvent DeserializeEntry(EventEntry entry)
         {
             // customer created
@@ -76,6 +88,7 @@ namespace EventReader
             throw new NotImplementedException("This type of event is not implemented.");
         }
 
+        // TODO: move this to DeserializeEntry
         private static IEvent AddEventKey(IEvent e, EventEntry entry)
         {
             e.SequenceId = entry.SequenceId;

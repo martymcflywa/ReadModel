@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using ReadModel.Events;
 
@@ -25,24 +26,10 @@ namespace ReadModel.Models.CustomerPayment
             Customers[customerId] += payment.Amount;
         }
 
-        public Guid GetHighestPayingCustomer()
+        public Tuple<Guid, decimal> GetHighestPayingCustomer()
         {
-            var highestPayingCustomer = default(Guid);
-            var highestPaidAmount = default(decimal);
-            foreach(var currentCustomer in Customers)
-            {
-                if(highestPayingCustomer == default(Guid))
-                {
-                    highestPayingCustomer = currentCustomer.Key;
-                    highestPaidAmount = currentCustomer.Value;
-                }
-                if(currentCustomer.Value > highestPaidAmount)
-                {
-                    highestPayingCustomer = currentCustomer.Key;
-                    highestPaidAmount = currentCustomer.Value;
-                }
-            }
-            return highestPayingCustomer;
+            var customerList = Customers.ToList().OrderByDescending(cl => cl.Value);
+            return Tuple.Create(customerList.First().Key, customerList.First().Value);
         }
     }
 }

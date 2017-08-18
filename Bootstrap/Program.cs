@@ -16,7 +16,7 @@ namespace Bootstrap
             var processor = new PaymentsByCustomerByDateProcessor();
             processor.Register(dispatcher);
             dispatcher.Process(startSequenceId);
-            var winners = processor.GetHighestPayingCustomerFor(new DateTime(2016, 1, 1));
+            var winners = processor.GetHighestPayingCustomers();
         }
     }
 }

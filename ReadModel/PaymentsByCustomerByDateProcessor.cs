@@ -6,40 +6,6 @@ using ReadModel.Models.CustomerPayment;
 
 namespace ReadModel
 {
-
-    /*
-     
-         var eventStoreReader = new ESReader("...");
-         var processor = new TimeToCashProcessor();
-         processor.Register(eventStoreReader);
-         
-        eventStoreReader.Process();
-
-         */
-    //public class SqlThing : IEventRegister
-    //{
-    //    private readonly Dictionary<EventKey, Action<object>> _dispatchMap = new Dictionary<EventKey, Action<object>>();
-
-    //    public void RegisterEventHandler<T>(short aggregateTypeId, short messageTypeId, Action<T> eventHandler)
-    //    {
-    //        _dispatchMap[new EventKey(aggregateTypeId, messageTypeId)] = e => eventHandler((T)e);
-    //    }
-
-    //    public void Build(IEnumerable<IEvent> events)
-    //    {
-    //        foreach (var e in events)
-    //        {
-    //            Dispatch(e);
-    //        }
-    //    }
-
-    //    private void Dispatch(IEvent e)
-    //    {
-    //        var handler = _dispatchMap[e.Key];
-    //        handler(e);
-    //    }
-    //}
-
     public class PaymentsByCustomerByDateProcessor 
     {
         private readonly Dictionary<Guid, Customer> _customers;
@@ -49,15 +15,6 @@ namespace ReadModel
         {
             _customers = new Dictionary<Guid, Customer>();
             _paymentsByMonthModel = new Dictionary<DateTime, PaymentsByMonth>();
-
-            /*
-             var myThing = new MyBuilder()
-             .WithCustomerName("Lee")
-                .WithLength(1)
-                .WithFoo(bar)
-                .Build();
-             
-             */
         }
 
         public void Register(IEventRegister register)
@@ -74,36 +31,38 @@ namespace ReadModel
             register.RegisterEventHandler<IRepaymentEvent>(repaymentAggregateType, 92, HandleRepaymentEvent);
         }
 
-        
-
-        private void HandleCustomerEvent(CustomerCreatedEvent cce)
+        /// <summary>
+        /// Add created or imported Customer to customer collection. Use CustomerId to retrieve customer details.
+        /// </summary>
+        /// <param name="customerCreatedEvent">The customer created/imported event.</param>
+        private void HandleCustomerEvent(CustomerCreatedEvent customerCreatedEvent)
         {
-            var customerId = cce.GetCustomerId();
+            var customerId = customerCreatedEvent.GetCustomerId();
             if (!_customers.ContainsKey(customerId))
             {
-                _customers.Add(customerId, new Customer(cce.FirstName, cce.Surname));
+                _customers.Add(customerId, new Customer(customerCreatedEvent.FirstName, customerCreatedEvent.Surname));
             }
         }
 
-        private void HandleRepaymentEvent(IRepaymentEvent rpe)
+        /// <summary>
+        /// Add payment to model that represents highest paying customer per month, per year.
+        /// </summary>
+        /// <param name="repaymentEvent"></param>
+        private void HandleRepaymentEvent(IRepaymentEvent repaymentEvent)
         {
-            var year = new DateTime(rpe.GetTransactionDate().Year, 1, 1);
+            var year = new DateTime(repaymentEvent.GetTransactionDate().Year, 1, 1);
             if (!_paymentsByMonthModel.ContainsKey(year))
             {
                 _paymentsByMonthModel.Add(year, new PaymentsByMonth());
             }
-            _paymentsByMonthModel[year].Add(rpe);
+            _paymentsByMonthModel[year].Add(repaymentEvent);
         }
 
-        public Dictionary<DateTime, Guid> GetHighestPayingCustomerFor(DateTime targetYear)
+        // TODO: change return type to Dictionary<Year, MonthlyResult>
+        // TODO: MonthlyResults members = Month, CustomerId, AmountPaid
+        public Dictionary<DateTime, Dictionary<DateTime, Tuple<Guid, decimal>>> GetHighestPayingCustomers()
         {
-            // reset year to first day/month incase targetYear is a real DateTime.
-            var year = new DateTime(targetYear.Year, 1, 1);
-            if(_paymentsByMonthModel.ContainsKey(year))
-            {
-                return _paymentsByMonthModel[year].GetHighestPayingCustomer();
-            }
-            throw new ArgumentOutOfRangeException("No payments made for " + year.Year);
+            return _paymentsByMonthModel.ToDictionary(year => year.Key, year => year.Value.GetHighestPayingCustomer());
         }
     }
 }

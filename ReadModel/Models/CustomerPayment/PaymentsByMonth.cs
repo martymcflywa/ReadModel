@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ReadModel.Events;
 
 namespace ReadModel.Models.CustomerPayment
@@ -7,40 +8,35 @@ namespace ReadModel.Models.CustomerPayment
     public class PaymentsByMonth
     {
         // K=DateTime.Month
-        public Dictionary<DateTime, CustomersByMonth> Months { get; }
+        private readonly Dictionary<DateTime, CustomersByMonth> _months;
 
         public PaymentsByMonth()
         {
-            Months = new Dictionary<DateTime, CustomersByMonth>();
+            _months = new Dictionary<DateTime, CustomersByMonth>();
         }
 
         public void Add(IRepaymentEvent payment)
         {
             var month = new DateTime(payment.GetTransactionDate().Year, payment.GetTransactionDate().Month, 1);
-            if(!Months.ContainsKey(month))
+            if(!_months.ContainsKey(month))
             {
-                Months.Add(month, new CustomersByMonth());
+                _months.Add(month, new CustomersByMonth());
             }
-            Months[month].Add(payment);
+            _months[month].Add(payment);
         }
 
-        public Guid GetHighestPayingCustomerFor(DateTime month)
+        public Tuple<Guid, decimal> GetHighestPayingCustomerFor(DateTime month)
         {
-            if (Months.ContainsKey(month))
+            if (_months.ContainsKey(month))
             {
-                return Months[month].GetHighestPayingCustomer();
+                return _months[month].GetHighestPayingCustomer();
             }
-            throw new ArgumentOutOfRangeException("No payments made for " + month.Month.ToString());
+            throw new ArgumentOutOfRangeException("No payments made for " + month.Month);
         }
 
-        public Dictionary<DateTime, Guid> GetHighestPayingCustomer()
+        public Dictionary<DateTime, Tuple<Guid, decimal>> GetHighestPayingCustomer()
         {
-            var highestPayingForAllMonths = new Dictionary<DateTime, Guid>();
-            foreach(KeyValuePair<DateTime, CustomersByMonth> month in Months)
-            {
-                highestPayingForAllMonths.Add(month.Key, GetHighestPayingCustomerFor(month.Key));
-            }
-            return highestPayingForAllMonths;
+            return _months.ToDictionary(month => month.Key, month => GetHighestPayingCustomerFor(month.Key));
         }
     }
 }
