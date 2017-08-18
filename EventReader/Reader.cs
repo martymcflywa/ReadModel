@@ -19,5 +19,20 @@ namespace EventReader
                 }
             }
         }
+
+        // Overloaded to allow selection of starting SequenceId. First Customer imported starts at 11927
+        public static IEnumerable<EventEntry> Read(this IDataSource source, long initSequenceId)
+        {
+            var sequenceId = initSequenceId;
+            while (true)
+            {
+                var entries = source.ExecuteQuery(sequenceId);
+                foreach (var entry in entries)
+                {
+                    sequenceId = entry.SequenceId;
+                    yield return entry;
+                }
+            }
+        }
     }
 }

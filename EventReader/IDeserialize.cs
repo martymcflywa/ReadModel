@@ -2,7 +2,7 @@
 
 namespace EventReader
 {
-    public interface ISerialize : IEventStream
+    public interface IDeserialize
     {
         IEvent DeserializeEntry(EventEntry entry);
     }

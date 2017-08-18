@@ -10,18 +10,10 @@ namespace Bootstrap
     {
         public static void Main()
         {
-            var generator = new ModelGenerator(new EventStream());
-            var model = generator.Build();
-            var winners = generator.GetHighestPayingCustomerFor(model, new DateTime(2016, 1, 1));
-
-            foreach(var customer in winners)
-            {
-                Console.WriteLine(
-                    "Highest paying customer for " + 
-                    customer.Key.Year + "-" + customer.Key.Month + " " + 
-                    customer.Value.FirstName + " " + customer.Value.Surname + " " +
-                    "$" + customer.Value.AmountPaid);
-            }
+            var stream = new EventStream();
+            var builder = new ModelBuilder();
+            builder.Build(stream.Get());
+            var winners = builder.GetHighestPayingCustomerFor(new DateTime(2016, 1, 1));
         }
     }
 }

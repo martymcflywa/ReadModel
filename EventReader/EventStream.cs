@@ -6,39 +6,23 @@ using System.Linq;
 
 namespace EventReader
 {
-    public class EventStream : ISerialize, IEventRegister
+    public class EventStream : IEventStream, IDeserialize
     {
         private readonly IDataSource _source;
-        private readonly Dictionary<EventKey, Action<object>> _dispatchMap;
 
         public EventStream()
         {
             _source = new SqlSource();
-            _dispatchMap = new Dictionary<EventKey, Action<object>>();
-        }
-
-        public void RegisterEventHandler<T>(short aggregateTypeId, short messageTypeId, Action<T> eventHandler)
-        {
-            _dispatchMap[new EventKey(aggregateTypeId, messageTypeId)] = e => eventHandler((T)e);
-        }
-
-        public void Process()
-        {
-            foreach (var e in Get())
-            {
-                Dispatch(e);
-            }
-        }
-
-        private void Dispatch(IEvent e)
-        {
-            var handler = _dispatchMap[e.Key];
-            handler(e);
         }
 
         public IEnumerable<IEvent> Get()
         {
             return _source.Read().Select(DeserializeEntry);
+        }
+
+        public IEnumerable<IEvent> Get(long initSequenceId)
+        {
+            return _source.Read(initSequenceId).Select(DeserializeEntry);
         }
 
         public IEvent DeserializeEntry(EventEntry entry)
