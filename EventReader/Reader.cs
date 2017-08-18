@@ -1,4 +1,5 @@
-﻿using ReadModel.Events;
+﻿using System;
+using ReadModel.Events;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 

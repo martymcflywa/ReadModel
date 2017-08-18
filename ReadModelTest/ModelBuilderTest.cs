@@ -16,7 +16,7 @@ namespace ReadModelTest
             var dispatcher = new SqlEventDispatcher();
             var processor = new PaymentsByCustomerByDateProcessor();
             processor.Register(dispatcher);
-            dispatcher.Process(0, limit);
+            dispatcher.Process();
             var winners = processor.GetHighestPayingCustomerFor(year);
             // need some validation here that model contains expected data
         }
@@ -26,7 +26,7 @@ namespace ReadModelTest
         {
             var year = new DateTime(2016, 1, 1);
             const int startSequenceId = 11926;
-            const int limit = 100000;
+            const int limit = 50000000;
             var dispatcher = new SqlEventDispatcher();
             var processor = new PaymentsByCustomerByDateProcessor();
             processor.Register(dispatcher);

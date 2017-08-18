@@ -9,14 +9,14 @@ namespace EventReader
         private readonly IElementSelector _selector;
 
         private const string CustomersAndRepaymentsQuery =
-            "select top 1000 t0.SequenceId, t0.AggregateTypeId, t0.MessageTypeId, t1.SequenceId as SequenceId, t1.Content " +
+            "select top 10000 * " +
             "from MessageHub.Message as t0 " +
             "inner join MessageHub.MessageContent as t1 on t0.SequenceId = t1.SequenceId " +
+            "where (t0.SequenceId > @sequenceId) and " +
             // customer created or imported
-            "where (t0.AggregateTypeId = 11 and t0.MessageTypeId in (1, 16)) or " +
+            "((t0.AggregateTypeId = 11 and t0.MessageTypeId in (1, 16)) or " +
             // loan repayment
-            "(t0.AggregateTypeId = 12 and t0.MessageTypeId in (83, 84, 85, 87, 89, 92)) and " +
-            "t0.SequenceId > @sequenceId " +
+            "(t0.AggregateTypeId = 12 and t0.MessageTypeId in (83, 84, 85, 87, 89, 92))) " +
             "order by t0.SequenceId ";
 
         public SqlSource()
