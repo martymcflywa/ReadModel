@@ -10,14 +10,11 @@ namespace EventReader
         public static IEnumerable<EventEntry> Read(this IDataSource source)
         {
             var sequenceId = -1L;
-            while(true)
+            var entries = source.ExecuteQuery(sequenceId);
+            foreach (var entry in entries)
             {
-                var entries = source.ExecuteQuery(sequenceId);
-                foreach (var entry in entries)
-                {
-                    sequenceId = entry.SequenceId;
-                    yield return entry;
-                }
+                sequenceId = entry.SequenceId;
+                yield return entry;
             }
         }
 
@@ -25,14 +22,11 @@ namespace EventReader
         public static IEnumerable<EventEntry> Read(this IDataSource source, long initSequenceId)
         {
             var sequenceId = initSequenceId;
-            while (true)
+            var entries = source.ExecuteQuery(sequenceId);
+            foreach (var entry in entries)
             {
-                var entries = source.ExecuteQuery(sequenceId);
-                foreach (var entry in entries)
-                {
-                    sequenceId = entry.SequenceId;
-                    yield return entry;
-                }
+                sequenceId = entry.SequenceId;
+                yield return entry;
             }
         }
     }

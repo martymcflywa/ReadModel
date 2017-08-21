@@ -9,7 +9,7 @@ namespace EventReader
         private readonly IElementSelector _selector;
 
         private const string CustomersAndRepaymentsQuery =
-            "select top 10000 * " +
+            "select * " +
             "from MessageHub.Message as t0 " +
             "inner join MessageHub.MessageContent as t1 on t0.SequenceId = t1.SequenceId " +
             "where (t0.SequenceId > @sequenceId) and " +
