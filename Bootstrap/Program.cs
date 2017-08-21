@@ -1,8 +1,5 @@
 ﻿using EventReader;
 using ReadModel;
-using System;
-using System.Collections.Generic;
-using ReadModel.Models.CustomerPayment;
 
 namespace Bootstrap
 {
@@ -10,12 +7,11 @@ namespace Bootstrap
     {
         public static void Main()
         {
-            const int startSequenceId = 11926;
-            const int limit = 100000;
-            var dispatcher = new SqlEventDispatcher();
+            var source = new SqlSource();
+            var dispatcher = new EventDispatcher();
             var processor = new PaymentsByCustomerByDateProcessor();
             processor.Register(dispatcher);
-            dispatcher.Process(startSequenceId);
+            dispatcher.Dispatch(source.Read());
             var winners = processor.GetHighestPayingCustomers();
         }
     }

@@ -9,10 +9,11 @@ namespace ReadModelTest
         [Fact]
         public void BuildFromFirstSequenceId()
         {
-            var dispatcher = new SqlEventDispatcher();
+            var source = new SqlSource();
+            var dispatcher = new EventDispatcher();
             var processor = new PaymentsByCustomerByDateProcessor();
             processor.Register(dispatcher);
-            dispatcher.Process();
+            dispatcher.Dispatch(source.Read());
             var winners = processor.GetHighestPayingCustomers();
             // need some validation here that model contains expected data
         }
@@ -20,11 +21,22 @@ namespace ReadModelTest
         [Fact]
         public void BuildFromSpecificSequenceId()
         {
-            const int startSequenceId = 11926;
-            var dispatcher = new SqlEventDispatcher();
+            const int start = 11926;
+            var source = new SqlSource();
+            var dispatcher = new EventDispatcher();
             var processor = new PaymentsByCustomerByDateProcessor();
             processor.Register(dispatcher);
-            dispatcher.Process(startSequenceId);
+            dispatcher.Dispatch(source.Read(start));
+            var winners = processor.GetHighestPayingCustomers();
+        }
+
+        public void NewKickOff()
+        {
+            var source = new SqlSource();
+            var dispatcher = new EventDispatcher();
+            var processor = new PaymentsByCustomerByDateProcessor();
+            processor.Register(dispatcher);
+            dispatcher.Dispatch(source.Read());
             var winners = processor.GetHighestPayingCustomers();
         }
     }

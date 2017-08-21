@@ -60,6 +60,7 @@ namespace ReadModel
 
         // TODO: change return type to Dictionary<Year, MonthlyResult>
         // TODO: MonthlyResults members = Month, CustomerId, AmountPaid
+        // TODO: Customer/pay models should contain SequenceId
         public Dictionary<DateTime, Dictionary<DateTime, Tuple<Guid, decimal>>> GetHighestPayingCustomers()
         {
             return _paymentsByMonthModel.ToDictionary(year => year.Key, year => year.Value.GetHighestPayingCustomer());
