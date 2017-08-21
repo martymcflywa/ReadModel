@@ -39,7 +39,7 @@ namespace ReadModel
             var customerId = customerCreatedEvent.GetCustomerId();
             if (!_customers.ContainsKey(customerId))
             {
-                _customers.Add(customerId, new Customer(customerCreatedEvent.FirstName, customerCreatedEvent.Surname));
+                _customers.Add(customerId, new Customer(customerCreatedEvent.AggregateId, customerCreatedEvent.FirstName, customerCreatedEvent.Surname));
             }
         }
 

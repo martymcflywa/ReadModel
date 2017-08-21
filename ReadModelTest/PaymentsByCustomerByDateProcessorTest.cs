@@ -21,13 +21,12 @@ namespace ReadModelTest
             dispatcher.Dispatch(GetTestData());
             var actual = processor.GetHighestPayingCustomers();
 
+            Assert.Equal(new DateTime(2016, 1, 1), actual.Keys.First());
             Assert.Equal(new DateTime(2016, 1, 1), actual.First().Value.YearMonth);
+            Assert.Equal(StringToGuid("Mike Diamond"), actual.First().Value.Customer.CustomerId);
             Assert.Equal("Mike", actual.First().Value.Customer.FirstName);
             Assert.Equal("Diamond", actual.First().Value.Customer.Surname);
             Assert.Equal(300, actual.First().Value.Customer.AmountPaid);
-
-            // TODO: Add CustomerId to Customer
-            //Assert.Equal(StringToGuid("Mike Diamond"), winners.First().Value.Customer.CustomerId);
         }
 
         [Fact]
@@ -39,6 +38,7 @@ namespace ReadModelTest
             var processor = new PaymentsByCustomerByDateProcessor();
             processor.Register(dispatcher);
             dispatcher.Dispatch(source.Read(start));
+            // break here just to check
             var winners = processor.GetHighestPayingCustomers();
         }
 

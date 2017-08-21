@@ -1,13 +1,17 @@
-﻿namespace ReadModel.Models.CustomerPayment
+﻿using System;
+
+namespace ReadModel.Models.CustomerPayment
 {
     public class Customer
     {
-        public string FirstName { get; private set; }
-        public string Surname { get; private set; }
+        public Guid CustomerId { get; }
+        public string FirstName { get; }
+        public string Surname { get; }
         public decimal AmountPaid { get; private set; }
 
-        public Customer(string firstName, string surname)
+        public Customer(Guid customerId, string firstName, string surname)
         {
+            CustomerId = customerId;
             FirstName = firstName;
             Surname = surname;
             AmountPaid = 0;

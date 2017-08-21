@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using EventReader;
 using Xunit;
 
@@ -20,7 +17,7 @@ namespace EventReaderTest
             var eventEntries = actual as EventEntry[] ?? actual.ToArray();
             Assert.NotEmpty(eventEntries);
             Assert.Equal(100, eventEntries.Length);
-            Assert.Equal(11927, eventEntries[0].SequenceId);
+            Assert.Equal(11927, eventEntries.First().SequenceId);
         }
 
         [Fact]
@@ -34,7 +31,7 @@ namespace EventReaderTest
             var eventEntries = actual as EventEntry[] ?? actual.ToArray();
             Assert.NotEmpty(eventEntries);
             Assert.Equal(100, eventEntries.Length);
-            Assert.Equal(11927, eventEntries[0].SequenceId);
+            Assert.Equal(11927, eventEntries.First().SequenceId);
         }
     }
 }
