@@ -61,9 +61,22 @@ namespace ReadModel
         // TODO: change return type to Dictionary<Year, MonthlyResult>
         // TODO: MonthlyResults members = Month, CustomerId, AmountPaid
         // TODO: Customer/pay models should contain SequenceId
-        public Dictionary<DateTime, Dictionary<DateTime, Tuple<Guid, decimal>>> GetHighestPayingCustomers()
+        public Dictionary<DateTime, MonthlyResult> GetHighestPayingCustomers()
         {
-            return _paymentsByMonthModel.ToDictionary(year => year.Key, year => year.Value.GetHighestPayingCustomer());
+            //return _paymentsByMonthModel.ToDictionary(year => year.Key, year => year.Value.GetHighestPayingCustomer());
+            var results = new Dictionary<DateTime, MonthlyResult>();
+            foreach (var year in _paymentsByMonthModel)
+            {
+                var highestPayingCustomersThisYear = year.Value.GetHighestPayingCustomer();
+                foreach (var month in highestPayingCustomersThisYear)
+                {
+                    var yearMonth = new DateTime(year.Key.Year, month.Key.Month, 1);
+                    var customer = _customers[month.Value.Item1];
+                    var amountPaid = month.Value.Item2;
+                    results.Add(yearMonth, new MonthlyResult(yearMonth, customer, amountPaid));
+                }
+            }
+            return results;
         }
     }
 }

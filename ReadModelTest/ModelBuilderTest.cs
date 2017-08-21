@@ -1,5 +1,7 @@
-﻿using EventReader;
+﻿using System.Collections.Generic;
+using EventReader;
 using ReadModel;
+using ReadModel.Events;
 using Xunit;
 
 namespace ReadModelTest
@@ -30,14 +32,10 @@ namespace ReadModelTest
             var winners = processor.GetHighestPayingCustomers();
         }
 
-        public void NewKickOff()
+        private IEnumerable<IEvent> buildTestData()
         {
-            var source = new SqlSource();
-            var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor();
-            processor.Register(dispatcher);
-            dispatcher.Dispatch(source.Read());
-            var winners = processor.GetHighestPayingCustomers();
+            // pass this into dispatcher.Dispatch()
+            return default(IEnumerable<IEvent>);
         }
     }
 }
