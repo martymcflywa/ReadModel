@@ -1,7 +1,6 @@
 ﻿using ReadModel.Events;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ReadModel.Models.CustomerPayment;
 
 namespace ReadModel
@@ -58,12 +57,8 @@ namespace ReadModel
             _paymentsByMonthModel[year].Add(repaymentEvent);
         }
 
-        // TODO: change return type to Dictionary<Year, MonthlyResult>
-        // TODO: MonthlyResults members = Month, CustomerId, AmountPaid
-        // TODO: Customer/pay models should contain SequenceId
         public Dictionary<DateTime, MonthlyResult> GetHighestPayingCustomers()
         {
-            //return _paymentsByMonthModel.ToDictionary(year => year.Key, year => year.Value.GetHighestPayingCustomer());
             var results = new Dictionary<DateTime, MonthlyResult>();
             foreach (var year in _paymentsByMonthModel)
             {

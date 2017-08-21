@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using ReadModel.Events;
 
@@ -9,25 +10,23 @@ namespace EventReader
     {
         public static IEnumerable<IEvent> Read(this IDataSource source)
         {
-            var sequenceId = -1L;
-            var entries = source.ExecuteQuery(sequenceId);
-            foreach (var entry in entries)
-            {
-                sequenceId = entry.SequenceId;
-                yield return entry.Deserialize();
-            }
+            return Read(source, -1L);
         }
 
-        // Overloaded to allow selection of starting SequenceId. First Customer imported starts at 11927
         public static IEnumerable<IEvent> Read(this IDataSource source, long initSequenceId)
         {
             var sequenceId = initSequenceId;
-            var entries = source.ExecuteQuery(sequenceId);
-            foreach (var entry in entries)
+            IEnumerable<EventEntry> entries;
+            do
             {
-                sequenceId = entry.SequenceId;
-                yield return entry.Deserialize();
-            }
+                entries = source.ExecuteQuery(sequenceId);
+                // TODO: Use .Select() instead
+                foreach (var entry in entries)
+                {
+                    sequenceId = entry.SequenceId;
+                    yield return entry.Deserialize();
+                }
+            } while (entries.Any());
         }
 
         private static IEvent Deserialize(this EventEntry entry)
