@@ -29,7 +29,7 @@ namespace ReadModelTest
             Assert.Equal(300, actual.First().Value.Customer.AmountPaid);
         }
 
-        [Fact]
+        [Fact(Skip = "Used for debugging Events from Sql.")]
         public void GetHighestPayingCustomers_UsingSqlSource()
         {
             const int start = 11926;
