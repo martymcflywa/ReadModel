@@ -10,22 +10,28 @@ using Xunit;
 
 namespace ReadModelTest
 {
-    public class ModelBuilderTest
+    public class PaymentsByCustomerByDateProcessorTest
     {
         [Fact]
-        public void BuildFromFirstSequenceId()
+        public void GetHighestPayingCustomers_UsingTestData()
         {
             var dispatcher = new EventDispatcher();
             var processor = new PaymentsByCustomerByDateProcessor();
             processor.Register(dispatcher);
             dispatcher.Dispatch(GetTestData());
-            var winners = processor.GetHighestPayingCustomers();
+            var actual = processor.GetHighestPayingCustomers();
 
+            Assert.Equal(new DateTime(2016, 1, 1), actual.First().Value.YearMonth);
+            Assert.Equal("Mike", actual.First().Value.Customer.FirstName);
+            Assert.Equal("Diamond", actual.First().Value.Customer.Surname);
+            Assert.Equal(300, actual.First().Value.Customer.AmountPaid);
 
+            // TODO: Add CustomerId to Customer
+            //Assert.Equal(StringToGuid("Mike Diamond"), winners.First().Value.Customer.CustomerId);
         }
 
         [Fact]
-        public void BuildFromSpecificSequenceId()
+        public void GetHighestPayingCustomers_UsingSqlSource()
         {
             const int start = 11926;
             var source = new SqlSource();
@@ -36,7 +42,7 @@ namespace ReadModelTest
             var winners = processor.GetHighestPayingCustomers();
         }
 
-        private IEnumerable<IEvent> GetTestData()
+        private static IEnumerable<IEvent> GetTestData()
         {
             return BuildCustomers().Concat(BuildPayments());
         }
