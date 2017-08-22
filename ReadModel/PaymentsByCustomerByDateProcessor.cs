@@ -8,8 +8,11 @@ namespace ReadModel
     public class PaymentsByCustomerByDateProcessor 
     {
         private IPersist Persist { get; }
-        public CustomersModel Customers { get; }
-        public PaymentsByYearByMonthModel Payments { get; }
+        public CustomersModel Customers { get; private set; }
+        public PaymentsByYearByMonthModel Payments { get; private set; }
+
+        private const string CustomersFilename = "Customers.json";
+        private const string PaymentsFilename = "PaymentsByYearByMonth.json";
 
         public PaymentsByCustomerByDateProcessor(IPersist persist)
         {
@@ -50,12 +53,18 @@ namespace ReadModel
             return results;
         }
 
+        // TODO: Make this private, called every x sequenceIds
         public void WriteModelsToFile()
         {
-            const string customersFilename = "Customers.json";
-            const string paymentsFilename = "PaymentsByYearByMonth.json";
-            Persist.Write(Customers, customersFilename);
-            Persist.Write(Payments, paymentsFilename);
+            Persist.Write(Customers, CustomersFilename);
+            Persist.Write(Payments, PaymentsFilename);
+        }
+
+        // TODO: Test this. Read() returns default(T) when file doesn't exist.
+        private void ReadModelsFromFile()
+        {
+            Customers = Persist.Read<CustomersModel>(CustomersFilename);
+            Payments = Persist.Read<PaymentsByYearByMonthModel>(PaymentsFilename);
         }
     }
 }

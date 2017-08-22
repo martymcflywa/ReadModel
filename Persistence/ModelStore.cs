@@ -8,7 +8,7 @@ namespace Persistence
 {
     public class ModelStore : IPersist
     {
-        public static JsonSerializer Serializer = new JsonSerializer();
+        private static readonly JsonSerializer Serializer = new JsonSerializer();
         private string Path { get; }
 
         public ModelStore(string path)
@@ -19,22 +19,31 @@ namespace Persistence
         public void Write(IModel model, string filename)
         {
             Directory.CreateDirectory(Path);
-            File.WriteAllText(System.IO.Path.Combine(Path, filename), Serialize(model));
+            var filepath = System.IO.Path.Combine(Path, filename);
+            using (var file = File.CreateText(filepath))
+            {
+                using (var writer = new JsonTextWriter(file))
+                {
+                    writer.Formatting = Formatting.Indented;
+                    Serializer.Serialize(writer, model);
+                }
+            }
         }
 
-        private static string Serialize(IModel model)
+        public T Read<T>(string filename)
         {
-            return JsonConvert.SerializeObject(model, Formatting.Indented);
-        }
-
-        public IModel Read(string filename)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static IModel Deserialize(string filename)
-        {
-            throw new NotImplementedException();
+            var filepath = System.IO.Path.Combine(Path, filename);
+            using (var file = File.OpenText(filepath))
+            {
+                if (!File.Exists(filepath))
+                {
+                    return default(T);
+                }
+                using (var reader = new JsonTextReader(file))
+                {
+                    return Serializer.Deserialize<T>(reader);
+                }
+            }
         }
     }
 }

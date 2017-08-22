@@ -58,7 +58,7 @@ namespace ReadModelTest
             processor.WriteModelsToFile();
         }
 
-        [Fact]
+        [Fact(Skip = "Used for debugging Events from Sql.")]
         public void WriteModelToFile_UsingSqlSource()
         {
             const string connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";

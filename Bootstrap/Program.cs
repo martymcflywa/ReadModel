@@ -1,4 +1,6 @@
-﻿using EventReader;
+﻿using System.IO;
+using EventReader;
+using Persistence;
 using ReadModel;
 
 namespace Bootstrap
@@ -9,7 +11,8 @@ namespace Bootstrap
         {
             var source = new SqlSource();
             var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor();
+            var path = Directory.GetCurrentDirectory();
+            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path));
             processor.Register(dispatcher);
             dispatcher.Dispatch(source.Read());
             var winners = processor.GetHighestPayingCustomers();
