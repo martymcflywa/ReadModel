@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Newtonsoft.Json;
 using ReadModel;
 using ReadModel.Models;
@@ -24,6 +25,16 @@ namespace Persistence
         private static string Serialize(IModel model)
         {
             return JsonConvert.SerializeObject(model, Formatting.Indented);
+        }
+
+        public IModel Read(string filename)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static IModel Deserialize(string filename)
+        {
+            throw new NotImplementedException();
         }
     }
 }

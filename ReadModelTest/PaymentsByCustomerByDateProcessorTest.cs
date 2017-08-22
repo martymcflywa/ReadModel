@@ -17,8 +17,9 @@ namespace ReadModelTest
         [Fact]
         public void GetHighestPayingCustomers_UsingTestData()
         {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
             var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor();
+            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path));
             processor.Register(dispatcher);
             dispatcher.Dispatch(GetTestData());
             var actual = processor.GetHighestPayingCustomers();
@@ -35,10 +36,11 @@ namespace ReadModelTest
         public void GetHighestPayingCustomers_UsingSqlSource()
         {
             const string connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
             const int start = 11926;
             var source = new SqlSource(connectionString);
             var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor();
+            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path));
             processor.Register(dispatcher);
             dispatcher.Dispatch(source.Read(start));
             // break here just to check
@@ -48,30 +50,26 @@ namespace ReadModelTest
         [Fact]
         public void WriteModelToFile_UsingTestData()
         {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
             var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor();
+            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path));
             processor.Register(dispatcher);
             dispatcher.Dispatch(GetTestData());
-
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
-            var modelStore = new ModelStore(path);
-            processor.WriteModelsToFile(modelStore);
+            processor.WriteModelsToFile();
         }
 
         [Fact]
         public void WriteModelToFile_UsingSqlSource()
         {
             const string connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
             const int start = 11926;
             var source = new SqlSource(connectionString);
             var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor();
+            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path));
             processor.Register(dispatcher);
             dispatcher.Dispatch(source.Read(start));
-
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
-            var modelStore = new ModelStore(path);
-            processor.WriteModelsToFile(modelStore);
+            processor.WriteModelsToFile();
         }
 
         private static IEnumerable<IEvent> GetTestData()

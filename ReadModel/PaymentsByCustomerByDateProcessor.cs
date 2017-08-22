@@ -7,11 +7,13 @@ namespace ReadModel
 {
     public class PaymentsByCustomerByDateProcessor 
     {
+        private IPersist Persist { get; }
         public CustomersModel Customers { get; }
         public PaymentsByYearByMonthModel Payments { get; }
 
-        public PaymentsByCustomerByDateProcessor()
+        public PaymentsByCustomerByDateProcessor(IPersist persist)
         {
+            Persist = persist;
             Customers = new CustomersModel();
             Payments = new PaymentsByYearByMonthModel();
         }
@@ -48,12 +50,12 @@ namespace ReadModel
             return results;
         }
 
-        public void WriteModelsToFile(IPersist writer)
+        public void WriteModelsToFile()
         {
             const string customersFilename = "Customers.json";
             const string paymentsFilename = "PaymentsByYearByMonth.json";
-            writer.Write(Customers, customersFilename);
-            writer.Write(Payments, paymentsFilename);
+            Persist.Write(Customers, customersFilename);
+            Persist.Write(Payments, paymentsFilename);
         }
     }
 }
