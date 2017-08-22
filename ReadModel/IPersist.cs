@@ -7,6 +7,6 @@ namespace ReadModel
 {
     public interface IPersist
     {
-        void Write(PaymentsByYearByMonthModel model, string path, string filename);
+        void Write(IModel model, string path, string filename);
     }
 }

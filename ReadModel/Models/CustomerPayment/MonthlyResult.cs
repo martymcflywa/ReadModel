@@ -13,7 +13,7 @@ namespace ReadModel.Models.CustomerPayment
         {
             YearMonth = yearMonth;
             Customer = customer;
-            customer.AddPayment(amountPaid);
+            customer.AmountPaid = amountPaid;
         }
     }
 }

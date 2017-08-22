@@ -17,13 +17,13 @@ namespace Persistence
             Serializer.Formatting = Formatting.Indented;
         }
 
-        public void Write(PaymentsByYearByMonthModel model, string path, string file)
+        public void Write(IModel model, string path, string file)
         {
             Directory.CreateDirectory(path);
             File.WriteAllText(Path.Combine(path, file), Serialize(model));
         }
 
-        private static string Serialize(PaymentsByYearByMonthModel model)
+        private static string Serialize(IModel model)
         {
             return JsonConvert.SerializeObject(model, Formatting.Indented);
         }
