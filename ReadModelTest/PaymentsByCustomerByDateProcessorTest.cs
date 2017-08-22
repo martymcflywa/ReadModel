@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using EventReader;
+using Persistence;
 using ReadModel;
 using ReadModel.Events;
 using Xunit;
@@ -21,8 +23,8 @@ namespace ReadModelTest
             dispatcher.Dispatch(GetTestData());
             var actual = processor.GetHighestPayingCustomers();
 
-            Assert.Equal(new DateTime(2016, 1, 1), actual.Keys.First());
-            Assert.Equal(new DateTime(2016, 1, 1), actual.First().Value.YearMonth);
+            Assert.Equal(new DateTime(2016, 1, 31), actual.Keys.First());
+            Assert.Equal(new DateTime(2016, 1, 31), actual.First().Value.YearMonth);
             Assert.Equal(StringToGuid("Mike Diamond"), actual.First().Value.Customer.CustomerId);
             Assert.Equal("Mike", actual.First().Value.Customer.FirstName);
             Assert.Equal("Diamond", actual.First().Value.Customer.Surname);
@@ -32,14 +34,44 @@ namespace ReadModelTest
         [Fact(Skip = "Used for debugging Events from Sql.")]
         public void GetHighestPayingCustomers_UsingSqlSource()
         {
+            const string connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
             const int start = 11926;
-            var source = new SqlSource();
+            var source = new SqlSource(connectionString);
             var dispatcher = new EventDispatcher();
             var processor = new PaymentsByCustomerByDateProcessor();
             processor.Register(dispatcher);
             dispatcher.Dispatch(source.Read(start));
             // break here just to check
             var winners = processor.GetHighestPayingCustomers();
+        }
+
+        [Fact]
+        public void WriteModelToFile_UsingTestData()
+        {
+            var dispatcher = new EventDispatcher();
+            var processor = new PaymentsByCustomerByDateProcessor();
+            processor.Register(dispatcher);
+            dispatcher.Dispatch(GetTestData());
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
+            var modelStore = new ModelStore();
+            processor.WriteModelToFile(modelStore, path);
+        }
+
+        [Fact]
+        public void WriteModelToFile_UsingSqlSource()
+        {
+            const string connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
+            const int start = 11926;
+            var source = new SqlSource(connectionString);
+            var dispatcher = new EventDispatcher();
+            var processor = new PaymentsByCustomerByDateProcessor();
+            processor.Register(dispatcher);
+            dispatcher.Dispatch(source.Read(start));
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
+            var modelStore = new ModelStore();
+            processor.WriteModelToFile(modelStore, path);
         }
 
         private static IEnumerable<IEvent> GetTestData()

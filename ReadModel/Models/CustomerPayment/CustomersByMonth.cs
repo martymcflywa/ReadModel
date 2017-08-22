@@ -8,7 +8,6 @@ namespace ReadModel.Models.CustomerPayment
 {
     public class CustomersByMonth
     {
-        // K=Customer.CustomerId
         public Dictionary<Guid, decimal> Customers { get; }
 
         public CustomersByMonth()
@@ -28,7 +27,7 @@ namespace ReadModel.Models.CustomerPayment
 
         public Tuple<Guid, decimal> GetHighestPayingCustomer()
         {
-            var customerList = Customers.ToList().OrderByDescending(cl => cl.Value);
+            var customerList = Customers.OrderByDescending(cl => cl.Value);
             return Tuple.Create(customerList.First().Key, customerList.First().Value);
         }
     }

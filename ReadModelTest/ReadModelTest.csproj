@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EventReader\EventReader.csproj" />
+    <ProjectReference Include="..\Persistence\Persistence.csproj" />
     <ProjectReference Include="..\ReadModel\ReadModel.csproj" />
   </ItemGroup>
 
