@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ReadModel.Models.CustomerPayment;
+﻿using ReadModel.Models;
 
 namespace ReadModel
 {
     public interface IPersist
     {
-        void Write(IModel model, string path, string filename);
+        void Write(IModel model, string filename);
     }
 }

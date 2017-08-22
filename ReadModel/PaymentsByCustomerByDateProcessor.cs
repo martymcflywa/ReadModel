@@ -48,12 +48,12 @@ namespace ReadModel
             return results;
         }
 
-        public void WriteModelsToFile(IPersist writer, string path)
+        public void WriteModelsToFile(IPersist writer)
         {
             const string customersFilename = "Customers.json";
             const string paymentsFilename = "PaymentsByYearByMonth.json";
-            writer.Write(Customers, path, customersFilename);
-            writer.Write(Payments, path, paymentsFilename);
+            writer.Write(Customers, customersFilename);
+            writer.Write(Payments, paymentsFilename);
         }
     }
 }

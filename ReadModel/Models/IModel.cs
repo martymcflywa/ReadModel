@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using ReadModel.Events;
 
-namespace ReadModel.Models.CustomerPayment
+namespace ReadModel.Models
 {
     public interface IModel
     {

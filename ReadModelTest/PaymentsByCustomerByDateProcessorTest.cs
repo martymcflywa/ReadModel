@@ -54,8 +54,8 @@ namespace ReadModelTest
             dispatcher.Dispatch(GetTestData());
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
-            var modelStore = new ModelStore();
-            processor.WriteModelsToFile(modelStore, path);
+            var modelStore = new ModelStore(path);
+            processor.WriteModelsToFile(modelStore);
         }
 
         [Fact]
@@ -70,8 +70,8 @@ namespace ReadModelTest
             dispatcher.Dispatch(source.Read(start));
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
-            var modelStore = new ModelStore();
-            processor.WriteModelsToFile(modelStore, path);
+            var modelStore = new ModelStore(path);
+            processor.WriteModelsToFile(modelStore);
         }
 
         private static IEnumerable<IEvent> GetTestData()
