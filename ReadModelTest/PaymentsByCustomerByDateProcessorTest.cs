@@ -20,10 +20,14 @@ namespace ReadModelTest
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
             const long writePageSize = 2;
 
+            var source = GetTestData();
+            var modelStore = new ModelStore(path, writePageSize);
             var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path, writePageSize));
+            var processor = new PaymentsByCustomerByDateProcessor(modelStore);
+
             processor.Register(dispatcher);
-            dispatcher.Dispatch(GetTestData());
+            processor.Resume();
+            dispatcher.Dispatch(source);
             var actual = processor.GetHighestPayingCustomers();
 
             Assert.Equal(new DateTime(2016, 1, 31), actual.Keys.First());
@@ -39,7 +43,7 @@ namespace ReadModelTest
         {
             const string connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
-            const long writePageSize = 10000;
+            const long writePageSize = 70000;
 
             var source = new SqlSource(connectionString);
             var modelStore = new ModelStore(path, writePageSize);
