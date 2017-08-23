@@ -18,8 +18,10 @@ namespace ReadModelTest
         public void GetHighestPayingCustomers_UsingTestData()
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
+            const long writePageSize = 2;
+
             var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path));
+            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path, writePageSize));
             processor.Register(dispatcher);
             dispatcher.Dispatch(GetTestData());
             var actual = processor.GetHighestPayingCustomers();
@@ -32,15 +34,17 @@ namespace ReadModelTest
             Assert.Equal(300, actual.First().Value.Customer.AmountPaid);
         }
 
-        [Fact(Skip = "Used for debugging Events from Sql.")]
+        [Fact]//(Skip = "Used for debugging Events from Sql.")]
         public void GetHighestPayingCustomers_UsingSqlSource()
         {
             const string connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
+            const long writePageSize = 10000;
+
             const int start = 11926;
             var source = new SqlSource(connectionString);
             var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path));
+            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path, writePageSize));
             processor.Register(dispatcher);
             dispatcher.Dispatch(source.Read(start));
             // break here just to check
@@ -51,11 +55,13 @@ namespace ReadModelTest
         public void WriteModelToFile_UsingTestData()
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
+            const long writePageSize = 5000;
+
             var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path));
+            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path, writePageSize));
             processor.Register(dispatcher);
             dispatcher.Dispatch(GetTestData());
-            processor.WriteModelsToFile();
+            var winners = processor.GetHighestPayingCustomers();
         }
 
         [Fact(Skip = "Used for debugging Events from Sql.")]
@@ -63,13 +69,15 @@ namespace ReadModelTest
         {
             const string connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
+            const long writePageSize = 5000;
+
             const int start = 11926;
             var source = new SqlSource(connectionString);
             var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path));
+            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path, writePageSize));
             processor.Register(dispatcher);
             dispatcher.Dispatch(source.Read(start));
-            processor.WriteModelsToFile();
+            var winners = processor.GetHighestPayingCustomers();
         }
 
         private static IEnumerable<IEvent> GetTestData()

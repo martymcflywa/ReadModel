@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using ReadModel.Events;
 
 namespace ReadModel.Models.CustomerPayment
 {
     public class CustomersModel : IModel
     {
+        private readonly IPersist _modelStore;
+        public string Filename { get; }
         public long CurrentSequenceId { get; private set; }
         public DateTimeOffset ModelCreatedDate { get; }
         public Dictionary<Guid, Customer> Customers { get; }
 
-        public CustomersModel()
+        public CustomersModel(IPersist modelStore)
         {
+            _modelStore = modelStore;
+            Filename = "Customers.json";
             CurrentSequenceId = 0;
             ModelCreatedDate = DateTimeOffset.Now;
             Customers = new Dictionary<Guid, Customer>();
@@ -30,6 +33,7 @@ namespace ReadModel.Models.CustomerPayment
                     customerEvent.Surname));
             }
             CurrentSequenceId = customerEvent.SequenceId;
+            _modelStore.Write(this, Filename);
         }
     }
 }
