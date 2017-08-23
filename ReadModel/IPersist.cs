@@ -6,7 +6,8 @@ namespace ReadModel
     {
         long WritePageSize { get; }
         long NextPage { get; set; }
-        void Write(IModel model, string filename);
+        void Write(IModel model);
         T Read<T>(string filename);
+        bool IsFileExists(string filename);
     }
 }

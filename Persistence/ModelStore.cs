@@ -24,15 +24,14 @@ namespace Persistence
         /// Serializes model to json file. Uses page size in constructor to determine write interval.
         /// </summary>
         /// <param name="model"></param>
-        /// <param name="filename"></param>
-        public void Write(IModel model, string filename)
+        public void Write(IModel model)
         {
             // TODO: Add logic to deal with default WritePageSize == 0.
             // Should only write when model fully populated.
             if (model.CurrentSequenceId >= NextPage || WritePageSize == 0)
             {
                 Directory.CreateDirectory(Path);
-                var filepath = System.IO.Path.Combine(Path, filename);
+                var filepath = System.IO.Path.Combine(Path, model.Filename);
                 using (var file = File.CreateText(filepath))
                 {
                     using (var writer = new JsonTextWriter(file))
@@ -41,7 +40,7 @@ namespace Persistence
                         Serializer.Serialize(writer, model);
                     }
                 }
-                NextPage += WritePageSize;
+                NextPage = model.CurrentSequenceId + WritePageSize;
             }
         }
 
@@ -58,13 +57,18 @@ namespace Persistence
             {
                 if (!File.Exists(filepath))
                 {
-                    return default(T);
+                    throw new FileNotFoundException(filepath);
                 }
                 using (var reader = new JsonTextReader(file))
                 {
                     return Serializer.Deserialize<T>(reader);
                 }
             }
+        }
+
+        public bool IsFileExists(string filename)
+        {
+            return File.Exists(System.IO.Path.Combine(Path, filename));
         }
     }
 }

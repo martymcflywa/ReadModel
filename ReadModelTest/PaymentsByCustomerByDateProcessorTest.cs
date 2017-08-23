@@ -39,14 +39,15 @@ namespace ReadModelTest
         {
             const string connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
-            const long writePageSize = 10000;
+            const long writePageSize = 100000;
 
-            const int start = 11926;
             var source = new SqlSource(connectionString);
+            var modelStore = new ModelStore(path, writePageSize);
             var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path, writePageSize));
+            var processor = new PaymentsByCustomerByDateProcessor(modelStore);
+
             processor.Register(dispatcher);
-            dispatcher.Dispatch(source.Read(start));
+            dispatcher.Dispatch(source.Read(processor.Resume()));
             // break here just to check
             var winners = processor.GetHighestPayingCustomers();
         }
@@ -57,10 +58,13 @@ namespace ReadModelTest
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
             const long writePageSize = 5000;
 
+            var source = GetTestData();
+            var modelStore = new ModelStore(path, writePageSize);
             var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path, writePageSize));
+            var processor = new PaymentsByCustomerByDateProcessor(modelStore);
+
             processor.Register(dispatcher);
-            dispatcher.Dispatch(GetTestData());
+            dispatcher.Dispatch(source);
             var winners = processor.GetHighestPayingCustomers();
         }
 
@@ -71,12 +75,13 @@ namespace ReadModelTest
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
             const long writePageSize = 5000;
 
-            const int start = 11926;
             var source = new SqlSource(connectionString);
+            var modelStore = new ModelStore(path, writePageSize);
             var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path, writePageSize));
+            var processor = new PaymentsByCustomerByDateProcessor(modelStore);
+
             processor.Register(dispatcher);
-            dispatcher.Dispatch(source.Read(start));
+            dispatcher.Dispatch(source.Read(processor.Resume()));
             var winners = processor.GetHighestPayingCustomers();
         }
 

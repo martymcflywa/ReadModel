@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ReadModel.Events;
 
 namespace ReadModel.Models.CustomerPayment
 {
     public class PaymentsByYearByMonthModel : IModel
     {
-        private readonly IPersist _modelStore;
-        public long CurrentSequenceId { get; private set; }
-        public DateTimeOffset ModelCreatedDate { get; }
-        public string Filename { get; }
-        public Dictionary<DateTime, PaymentsByMonth> Years { get; }
+        public long CurrentSequenceId { get; set; }
+        public DateTimeOffset ModelCreatedDate { get; set; }
+        public string Filename { get; set; }
+        public Dictionary<DateTime, PaymentsByMonth> Years { get; set; }
 
-        public PaymentsByYearByMonthModel(IPersist modelStore)
+        public PaymentsByYearByMonthModel(string filename)
         {
-            _modelStore = modelStore;
-            Filename = "PaymentsByYearByMonth.json";
+            Filename = filename;
             CurrentSequenceId = 0;
             ModelCreatedDate = DateTimeOffset.Now;
             Years = new Dictionary<DateTime, PaymentsByMonth>();
@@ -35,7 +34,6 @@ namespace ReadModel.Models.CustomerPayment
             }
             Years[year].Add(repaymentEvent);
             CurrentSequenceId = repaymentEvent.SequenceId;
-            _modelStore.Write(this, Filename);
         }
     }
 }

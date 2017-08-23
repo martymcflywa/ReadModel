@@ -1,31 +1,41 @@
 ﻿using ReadModel.Events;
 using System;
 using System.Collections.Generic;
+using ReadModel.Models;
 using ReadModel.Models.CustomerPayment;
 
 namespace ReadModel
 {
-    public class PaymentsByCustomerByDateProcessor 
+    public class PaymentsByCustomerByDateProcessor
     {
-        public CustomersModel Customers { get; }
-        public PaymentsByYearByMonthModel Payments { get; }
+        private readonly IPersist _modelStore;
+        public CustomersModel Customers { get; private set; }
+        private const string CustomersFilename = "Customers.json";
+        public PaymentsByYearByMonthModel Payments { get; private set; }
+        private const string PaymentsFilename = "Payments.json";
 
         public PaymentsByCustomerByDateProcessor(IPersist modelStore)
         {
-            Customers = new CustomersModel(modelStore);
-            Payments = new PaymentsByYearByMonthModel(modelStore);
+            _modelStore = modelStore;
+        }
+
+        public long Resume()
+        {
+            Customers = _modelStore.IsFileExists(CustomersFilename) ? _modelStore.Read<CustomersModel>(CustomersFilename) : new CustomersModel(CustomersFilename);
+            Payments = _modelStore.IsFileExists(PaymentsFilename) ? _modelStore.Read<PaymentsByYearByMonthModel>(PaymentsFilename) : new PaymentsByYearByMonthModel(PaymentsFilename);
+            return Math.Max(Customers.CurrentSequenceId, Payments.CurrentSequenceId);
         }
 
         public void Register(IEventRegister register)
         {
-            register.RegisterEventHandler<CustomerCreatedEvent>(11, 1, Customers.AddEvent);
-            register.RegisterEventHandler<CustomerCreatedEvent>(11, 16, Customers.AddEvent);
-            register.RegisterEventHandler<IRepaymentEvent>(12, 83, Payments.AddEvent);
-            register.RegisterEventHandler<IRepaymentEvent>(12, 84, Payments.AddEvent);
-            register.RegisterEventHandler<IRepaymentEvent>(12, 85, Payments.AddEvent);
-            register.RegisterEventHandler<IRepaymentEvent>(12, 87, Payments.AddEvent);
-            register.RegisterEventHandler<IRepaymentEvent>(12, 89, Payments.AddEvent);
-            register.RegisterEventHandler<IRepaymentEvent>(12, 92, Payments.AddEvent);
+            register.RegisterEventHandler<CustomerCreatedEvent>(11, 1, e => { Customers.AddEvent(e); _modelStore.Write(Customers); });
+            register.RegisterEventHandler<CustomerCreatedEvent>(11, 16, e => { Customers.AddEvent(e); _modelStore.Write(Customers); });
+            register.RegisterEventHandler<IRepaymentEvent>(12, 83, e => { Payments.AddEvent(e); _modelStore.Write(Payments); });
+            register.RegisterEventHandler<IRepaymentEvent>(12, 84, e => { Payments.AddEvent(e); _modelStore.Write(Payments); });
+            register.RegisterEventHandler<IRepaymentEvent>(12, 85, e => { Payments.AddEvent(e); _modelStore.Write(Payments); });
+            register.RegisterEventHandler<IRepaymentEvent>(12, 87, e => { Payments.AddEvent(e); _modelStore.Write(Payments); });
+            register.RegisterEventHandler<IRepaymentEvent>(12, 89, e => { Payments.AddEvent(e); _modelStore.Write(Payments); });
+            register.RegisterEventHandler<IRepaymentEvent>(12, 92, e => { Payments.AddEvent(e); _modelStore.Write(Payments); });
         }
 
         public Dictionary<DateTime, MonthlyResult> GetHighestPayingCustomers()

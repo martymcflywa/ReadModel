@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using ReadModel.Events;
 
 namespace ReadModel.Models.CustomerPayment
 {
     public class CustomersByMonth
     {
-        public Dictionary<Guid, decimal> Customers { get; }
+        public Dictionary<Guid, decimal> Customers { get; set; }
 
         public CustomersByMonth()
         {

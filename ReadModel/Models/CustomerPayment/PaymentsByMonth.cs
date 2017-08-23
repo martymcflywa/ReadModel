@@ -8,7 +8,7 @@ namespace ReadModel.Models.CustomerPayment
     public class PaymentsByMonth
     {
         // K=DateTime.Months
-        public Dictionary<DateTime, CustomersByMonth> Months { get; }
+        public Dictionary<DateTime, CustomersByMonth> Months { get; set; }
 
         public PaymentsByMonth()
         {
