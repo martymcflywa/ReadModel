@@ -14,7 +14,7 @@ namespace Bootstrap
 
         const string CUSTOMER_QUERY =
                 "select top 100 * " +
-                "from MessageHub.Message as t0 " +
+                "from MessageHub.Payload as t0 " +
                 "join MessageHub.MessageContent as t1 " +
                 "on t0.SequenceId = t1.SequenceId " +
                 "where t0.MessageTypeId = 1 and t0.AggregateTypeId = 11 " +
@@ -22,7 +22,7 @@ namespace Bootstrap
 
         const string REPAYMENT_QUERY =
                 "select top 100 * " +
-                "from MessageHub.Message as t0 " +
+                "from MessageHub.Payload as t0 " +
                 "join MessageHub.MessageContent as t1 " +
                 "on t0.sequenceId = t1.sequenceId " +
                 "where MessageTypeId in (83, 84, 85, 87, 89, 92) and " +

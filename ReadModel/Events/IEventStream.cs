@@ -6,6 +6,7 @@ namespace ReadModel.Events
 {
     public interface IEventStream
     {
-        IEnumerable<IEvent> Get(EventType eventType);
+        IEnumerable<IEvent> Get();
+        IEnumerable<IEvent> Get(long initSequenceId);
     }
 }

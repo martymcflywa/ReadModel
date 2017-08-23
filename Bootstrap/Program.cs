@@ -1,8 +1,7 @@
-﻿using EventReader;
+﻿using System.IO;
+using EventReader;
+using Persistence;
 using ReadModel;
-using ReadModel.Models;
-using System;
-using System.Collections.Generic;
 
 namespace Bootstrap
 {
@@ -10,18 +9,14 @@ namespace Bootstrap
     {
         public static void Main()
         {
-            var generator = new ModelGenerator(new EventStream());
-            var model = generator.Build();
-            var winners = generator.GetHighestPayingCustomerFor(model, new DateTime(2016, 1, 1));
-
-            foreach(KeyValuePair<DateTime, Customer> customer in winners)
-            {
-                Console.WriteLine(
-                    "Highest paying customer for " + 
-                    customer.Key.Year + "-" + customer.Key.Month.ToString() + " " + 
-                    customer.Value.FirstName + " " + customer.Value.Surname + " " +
-                    "$" + customer.Value.AmountPaid);
-            }
+            const long writePageSize = 5000;
+            var source = new SqlSource();
+            var dispatcher = new EventDispatcher();
+            var path = Directory.GetCurrentDirectory();
+            var processor = new PaymentsByCustomerByDateProcessor(new ModelStore(path, writePageSize));
+            processor.Register(dispatcher);
+            dispatcher.Dispatch(source.Read());
+            var winners = processor.GetHighestPayingCustomers();
         }
     }
 }

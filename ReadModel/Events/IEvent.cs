@@ -6,7 +6,8 @@ namespace ReadModel.Events
 {
     public interface IEvent
     {
-        Guid MessageId { get; set; }
+        long SequenceId { get; set; }
+        EventKey Key { get; set; }
         Guid AggregateId { get; set; }
         DateTimeOffset Timestamp { get; set; }
 

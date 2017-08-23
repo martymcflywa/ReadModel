@@ -4,7 +4,8 @@ namespace ReadModel.Events
 {
     public class CustomerCreatedEvent : IEvent
     {
-        public Guid MessageId { get; set; }
+        public long SequenceId { get; set; }
+        public EventKey Key { get; set; }
         public Guid AggregateId { get; set; }
         public DateTimeOffset Timestamp { get; set; }
 

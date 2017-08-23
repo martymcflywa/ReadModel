@@ -6,7 +6,8 @@ namespace ReadModel.Events
 {
     public class BankingPaymentEvent : IRepaymentEvent
     {
-        public Guid MessageId { get; set; }
+        public long SequenceId { get; set; }
+        public EventKey Key { get; set; }
         public Guid AggregateId { get; set; }
         public DateTimeOffset Timestamp { get; set; }
 
