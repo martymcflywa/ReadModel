@@ -1,7 +1,6 @@
 ﻿using ReadModel.Events;
 using System;
 using System.Collections.Generic;
-using ReadModel.Models;
 using ReadModel.Models.CustomerPayment;
 
 namespace ReadModel

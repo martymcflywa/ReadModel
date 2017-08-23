@@ -39,7 +39,7 @@ namespace ReadModelTest
         {
             const string connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
-            const long writePageSize = 100000;
+            const long writePageSize = 10000;
 
             var source = new SqlSource(connectionString);
             var modelStore = new ModelStore(path, writePageSize);

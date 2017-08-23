@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Newtonsoft.Json;
 using ReadModel;
 using ReadModel.Models;
@@ -11,13 +10,13 @@ namespace Persistence
         private static readonly JsonSerializer Serializer = new JsonSerializer();
         public string Path { get; }
         public long WritePageSize { get; }
-        public long NextPage { get; set; }
+        private long _processed;
 
         public ModelStore(string path, long writePageSize)
         {
             Path = path;
             WritePageSize = writePageSize;
-            NextPage += WritePageSize;
+            _processed = 0;
         }
 
         /// <summary>
@@ -28,7 +27,8 @@ namespace Persistence
         {
             // TODO: Add logic to deal with default WritePageSize == 0.
             // Should only write when model fully populated.
-            if (model.CurrentSequenceId >= NextPage || WritePageSize == 0)
+            _processed++;
+            if (_processed > WritePageSize)
             {
                 Directory.CreateDirectory(Path);
                 var filepath = System.IO.Path.Combine(Path, model.Filename);
@@ -40,7 +40,7 @@ namespace Persistence
                         Serializer.Serialize(writer, model);
                     }
                 }
-                NextPage = model.CurrentSequenceId + WritePageSize;
+                _processed = 0;
             }
         }
 
