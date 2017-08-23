@@ -1,6 +1,7 @@
 ﻿using ReadModel.Events;
 using System;
 using System.Collections.Generic;
+using ReadModel.Models;
 using ReadModel.Models.CustomerPayment;
 
 namespace ReadModel
@@ -8,11 +9,9 @@ namespace ReadModel
     public class PaymentsByCustomerByDateProcessor
     {
         private readonly IPersist _modelStore;
-        public CustomersModel Customers { get; private set; }
-        private const string CustomersFilename = "Customers.json";
-        public PaymentsByYearByMonthModel Payments { get; private set; }
-        private const string PaymentsFilename = "Payments.json";
-
+        private PaymentsByCustomerByDateModel _model;
+        private const string Filename = "PaymentsByCustomerByDate.json";
+        
         public PaymentsByCustomerByDateProcessor(IPersist modelStore)
         {
             _modelStore = modelStore;
@@ -20,27 +19,35 @@ namespace ReadModel
 
         public long Resume()
         {
-            Customers = _modelStore.IsFileExists(CustomersFilename) ? _modelStore.Read<CustomersModel>(CustomersFilename) : new CustomersModel(CustomersFilename);
-            Payments = _modelStore.IsFileExists(PaymentsFilename) ? _modelStore.Read<PaymentsByYearByMonthModel>(PaymentsFilename) : new PaymentsByYearByMonthModel(PaymentsFilename);
-            return Math.Max(Customers.CurrentSequenceId, Payments.CurrentSequenceId);
+            _model = _modelStore.IsFileExists(Filename)
+                ? _modelStore.Read<PaymentsByCustomerByDateModel>(Filename)
+                : new PaymentsByCustomerByDateModel(Filename);
+
+            return _model.CurrentSequenceId;
         }
 
         public void Register(IEventRegister register)
         {
-            register.RegisterEventHandler<CustomerCreatedEvent>(11, 1, e => { Customers.AddEvent(e); _modelStore.Write(Customers); });
-            register.RegisterEventHandler<CustomerCreatedEvent>(11, 16, e => { Customers.AddEvent(e); _modelStore.Write(Customers); });
-            register.RegisterEventHandler<IRepaymentEvent>(12, 83, e => { Payments.AddEvent(e); _modelStore.Write(Payments); });
-            register.RegisterEventHandler<IRepaymentEvent>(12, 84, e => { Payments.AddEvent(e); _modelStore.Write(Payments); });
-            register.RegisterEventHandler<IRepaymentEvent>(12, 85, e => { Payments.AddEvent(e); _modelStore.Write(Payments); });
-            register.RegisterEventHandler<IRepaymentEvent>(12, 87, e => { Payments.AddEvent(e); _modelStore.Write(Payments); });
-            register.RegisterEventHandler<IRepaymentEvent>(12, 89, e => { Payments.AddEvent(e); _modelStore.Write(Payments); });
-            register.RegisterEventHandler<IRepaymentEvent>(12, 92, e => { Payments.AddEvent(e); _modelStore.Write(Payments); });
+            register.RegisterEventHandler<CustomerCreatedEvent>(11, 1, AddEvent);
+            register.RegisterEventHandler<CustomerCreatedEvent>(11, 16, AddEvent);
+            register.RegisterEventHandler<IRepaymentEvent>(12, 83, AddEvent);
+            register.RegisterEventHandler<IRepaymentEvent>(12, 84, AddEvent);
+            register.RegisterEventHandler<IRepaymentEvent>(12, 85, AddEvent);
+            register.RegisterEventHandler<IRepaymentEvent>(12, 87, AddEvent);
+            register.RegisterEventHandler<IRepaymentEvent>(12, 89, AddEvent);
+            register.RegisterEventHandler<IRepaymentEvent>(12, 92, AddEvent);
+        }
+
+        private void AddEvent<T>(T e)
+        {
+            _model.AddEvent(e);
+            _modelStore.Write(_model);
         }
 
         public Dictionary<DateTime, MonthlyResult> GetHighestPayingCustomers()
         {
             var results = new Dictionary<DateTime, MonthlyResult>();
-            foreach (var year in Payments.Years)
+            foreach (var year in _model.Payments)
             {
                 var highestPayingCustomersPerYear = year.Value.GetHighestPayingCustomer();
                 foreach (var month in highestPayingCustomersPerYear)
@@ -49,7 +56,7 @@ namespace ReadModel
                         year.Key.Year, 
                         month.Key.Month, 
                         DateTime.DaysInMonth(year.Key.Year, month.Key.Month));
-                    var customer = Customers.Customers[month.Value.Item1];
+                    var customer = _model.Customers[month.Value.Item1];
                     var amountPaid = month.Value.Item2;
                     results.Add(yearMonth, new MonthlyResult(yearMonth, customer, amountPaid));
                 }

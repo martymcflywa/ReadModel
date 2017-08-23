@@ -1,5 +1,4 @@
 ﻿using System;
-using ReadModel.Events;
 
 namespace ReadModel.Models
 {
@@ -8,6 +7,6 @@ namespace ReadModel.Models
         string Filename { get; }
         long CurrentSequenceId { get; }
         DateTimeOffset ModelCreatedDate { get; }
-        void AddEvent(IEvent e);
+        void AddEvent<T>(T e);
     }
 }
