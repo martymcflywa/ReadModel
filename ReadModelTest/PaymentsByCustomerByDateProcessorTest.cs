@@ -8,6 +8,7 @@ using EventReader;
 using Persistence;
 using ReadModel;
 using ReadModel.Events;
+using ReadModel.Models.CustomerPayment;
 using Xunit;
 
 namespace ReadModelTest
@@ -18,27 +19,29 @@ namespace ReadModelTest
         public void GetHighestPayingCustomers_UsingTestData()
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
-            const long writePageSize = 2;
+            using (new Teardown(path))
+            {
+                const long writePageSize = 1;
+                var source = GetTestData();
+                var modelStore = new ModelStore(path, writePageSize);
+                var dispatcher = new EventDispatcher();
+                var processor = new PaymentsByCustomerByDateProcessor(modelStore);
 
-            var source = GetTestData();
-            var modelStore = new ModelStore(path, writePageSize);
-            var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor(modelStore);
+                processor.Register(dispatcher);
+                dispatcher.Dispatch(source);
 
-            processor.Register(dispatcher);
-            processor.Resume();
-            dispatcher.Dispatch(source);
-            var actual = processor.GetHighestPayingCustomers();
-
-            Assert.Equal(new DateTime(2016, 1, 31), actual.Keys.First());
-            Assert.Equal(new DateTime(2016, 1, 31), actual.First().Value.YearMonth);
-            Assert.Equal(StringToGuid("Mike Diamond"), actual.First().Value.Customer.CustomerId);
-            Assert.Equal("Mike", actual.First().Value.Customer.FirstName);
-            Assert.Equal("Diamond", actual.First().Value.Customer.Surname);
-            Assert.Equal(300, actual.First().Value.Customer.AmountPaid);
+                // verify results from test data
+                var actual = processor.GetHighestPayingCustomers();
+                Assert.Equal(new DateTime(2016, 1, 31), actual.Keys.First());
+                Assert.Equal(new DateTime(2016, 1, 31), actual.First().Value.YearMonth);
+                Assert.Equal(StringToGuid("Mike Diamond"), actual.First().Value.Customer.CustomerId);
+                Assert.Equal("Mike", actual.First().Value.Customer.FirstName);
+                Assert.Equal("Diamond", actual.First().Value.Customer.Surname);
+                Assert.Equal(300, actual.First().Value.Customer.AmountPaid);
+            }
         }
 
-        [Fact]//(Skip = "Used for debugging Events from Sql.")]
+        [Fact(Skip = "Used for debugging Events from Sql.")]
         public void GetHighestPayingCustomers_UsingSqlSource()
         {
             const string connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
@@ -50,8 +53,9 @@ namespace ReadModelTest
             var dispatcher = new EventDispatcher();
             var processor = new PaymentsByCustomerByDateProcessor(modelStore);
 
+            var start = processor.ResumeFrom;
             processor.Register(dispatcher);
-            dispatcher.Dispatch(source.Read(processor.Resume()));
+            dispatcher.Dispatch(source.Read(start));
             // break here just to check
             var winners = processor.GetHighestPayingCustomers();
         }
@@ -60,16 +64,31 @@ namespace ReadModelTest
         public void WriteModelToFile_UsingTestData()
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
-            const long writePageSize = 5000;
+            using (new Teardown(path))
+            {
+                const long writePageSize = 1;
 
-            var source = GetTestData();
-            var modelStore = new ModelStore(path, writePageSize);
-            var dispatcher = new EventDispatcher();
-            var processor = new PaymentsByCustomerByDateProcessor(modelStore);
+                var source = GetTestData();
+                var modelStore = new ModelStore(path, writePageSize);
+                var dispatcher = new EventDispatcher();
+                var processor = new PaymentsByCustomerByDateProcessor(modelStore);
 
-            processor.Register(dispatcher);
-            dispatcher.Dispatch(source);
-            var winners = processor.GetHighestPayingCustomers();
+                processor.Register(dispatcher);
+                dispatcher.Dispatch(source);
+                var winners = processor.GetHighestPayingCustomers();
+
+                // verify file actually exists
+                const string expectedFilename = "PaymentsByCustomerByDate.json";
+                var actualFileInfo = new FileInfo(Directory.GetFiles(path).First());
+                Assert.Equal(expectedFilename, actualFileInfo.Name);
+                Assert.Equal(path, actualFileInfo.DirectoryName);
+
+                // verify contents of file
+                var actualModelFromFile = modelStore.Read<PaymentsByCustomerByDateModel>(expectedFilename);
+                Assert.Equal(8, actualModelFromFile.CurrentSequenceId);
+                Assert.Equal(3, actualModelFromFile.Customers.Count);
+                Assert.Equal(1, actualModelFromFile.Payments.Count);
+            }
         }
 
         [Fact(Skip = "Used for debugging Events from Sql.")]
@@ -77,15 +96,16 @@ namespace ReadModelTest
         {
             const string connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
             var path = Path.Combine(Directory.GetCurrentDirectory(), "test");
-            const long writePageSize = 5000;
+            const long writePageSize = 70000;
 
             var source = new SqlSource(connectionString);
             var modelStore = new ModelStore(path, writePageSize);
             var dispatcher = new EventDispatcher();
             var processor = new PaymentsByCustomerByDateProcessor(modelStore);
 
+            var start = processor.ResumeFrom;
             processor.Register(dispatcher);
-            dispatcher.Dispatch(source.Read(processor.Resume()));
+            dispatcher.Dispatch(source.Read(start));
             var winners = processor.GetHighestPayingCustomers();
         }
 
@@ -180,6 +200,27 @@ namespace ReadModelTest
             var hasher = MD5.Create();
             var data = hasher.ComputeHash(Encoding.UTF8.GetBytes(value));
             return new Guid(data);
+        }
+
+        private class Teardown : IDisposable
+        {
+            private readonly string _path;
+
+            public Teardown(string path)
+            {
+                _path = path;
+            }
+            public void Dispose()
+            {
+                if (!Directory.Exists(_path)) return;
+
+                var files = Directory.GetFiles(_path);
+                foreach (var file in files)
+                {
+                    File.Delete(file);
+                }
+                Directory.Delete(_path);
+            }
         }
     }
 }

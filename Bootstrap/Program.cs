@@ -20,8 +20,9 @@ namespace Bootstrap
             var dispatcher = new EventDispatcher();
             var processor = new PaymentsByCustomerByDateProcessor(modelStore);
 
+            var resumeFrom = processor.ResumeFrom;
             processor.Register(dispatcher);
-            dispatcher.Dispatch(source.Read(processor.Resume()));
+            dispatcher.Dispatch(source.Read(resumeFrom));
 
             PrintWinners(processor.GetHighestPayingCustomers());
         }

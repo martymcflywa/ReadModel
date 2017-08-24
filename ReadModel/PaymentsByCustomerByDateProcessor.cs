@@ -1,7 +1,6 @@
 ﻿using ReadModel.Events;
 using System;
 using System.Collections.Generic;
-using ReadModel.Models;
 using ReadModel.Models.CustomerPayment;
 
 namespace ReadModel
@@ -11,13 +10,15 @@ namespace ReadModel
         private readonly IPersist _modelStore;
         private PaymentsByCustomerByDateModel _model;
         private const string Filename = "PaymentsByCustomerByDate.json";
+        public long ResumeFrom { get; }
         
         public PaymentsByCustomerByDateProcessor(IPersist modelStore)
         {
             _modelStore = modelStore;
+            ResumeFrom = Resume();
         }
 
-        public long Resume()
+        private long Resume()
         {
             _model = _modelStore.IsFileExists(Filename)
                 ? _modelStore.Read<PaymentsByCustomerByDateModel>(Filename)
