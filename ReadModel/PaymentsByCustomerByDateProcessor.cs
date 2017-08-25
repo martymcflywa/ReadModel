@@ -20,6 +20,7 @@ namespace ReadModel
 
         public long Resume()
         {
+            // TODO: put this logic in Read()
             _model = _modelStore.IsFileExists(Filename)
                 ? _modelStore.Read<PaymentsByCustomerByDateModel>(Filename)
                 : new PaymentsByCustomerByDateModel(Filename);
