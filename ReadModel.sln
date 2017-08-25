@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "Persistence\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "WebAPI\WebAPI.csproj", "{44C2811E-56F9-43BD-A8E2-404AA5D6D2CB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebDash", "WebDash\WebDash.csproj", "{C9622805-99EC-44B7-BC36-7D289CC9A36C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{44C2811E-56F9-43BD-A8E2-404AA5D6D2CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44C2811E-56F9-43BD-A8E2-404AA5D6D2CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44C2811E-56F9-43BD-A8E2-404AA5D6D2CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9622805-99EC-44B7-BC36-7D289CC9A36C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9622805-99EC-44B7-BC36-7D289CC9A36C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9622805-99EC-44B7-BC36-7D289CC9A36C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9622805-99EC-44B7-BC36-7D289CC9A36C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
