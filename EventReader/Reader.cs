@@ -29,6 +29,26 @@ namespace EventReader
             } while (entries.Any());
         }
 
+        /// <summary>
+        /// Simulating app always on, can pull latest whenever request received by web api.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="initSequenceId"></param>
+        /// <returns></returns>
+        public static IEnumerable<IEvent> ReadAlways(this IDataSource source, long initSequenceId)
+        {
+            var sequenceId = initSequenceId;
+            while (true)
+            {
+                var entries = source.ExecuteQuery(sequenceId);
+                foreach (var entry in entries)
+                {
+                    sequenceId = entry.SequenceId;
+                    yield return entry.Deserialize();
+                }
+            }
+        }
+
         private static IEvent Deserialize(this EventEntry entry)
         {
             return entry.DeserializeEntry().AddEventKey();
