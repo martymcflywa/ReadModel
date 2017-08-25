@@ -18,7 +18,7 @@ namespace ReadModel
             ResumeFrom = Resume();
         }
 
-        private long Resume()
+        public long Resume()
         {
             _model = _modelStore.IsFileExists(Filename)
                 ? _modelStore.Read<PaymentsByCustomerByDateModel>(Filename)

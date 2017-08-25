@@ -4,18 +4,30 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using WebAPI.Interfaces;
 
 namespace WebAPI.Controllers
 {
     [Produces("application/json")]
-    [Route("api/HighestPayingCustomersPerMonth")]
+    [Route("api/[controller]")]
     public class HighestPayingCustomersPerMonthController : Controller
     {
+        private readonly IReadModelService _service;
+
+        public HighestPayingCustomersPerMonthController(IReadModelService service)
+        {
+            _service = service;
+        }
+
         // GET: api/HighestPayingCustomersPerMonth
         [HttpGet]
-        public IEnumerable<string> Get()
+        public string Get()
         {
-            return new string[] { "value1", "value2" };
+            // TODO: Decouple read model update from endpoint.
+            // Maybe have ReadModel save result in file, served here,
+            // while Bootstrap perpetually runs and updates every x length of time.
+            return JsonConvert.SerializeObject(_service.Get().ToArray());
         }
 
         // GET: api/HighestPayingCustomersPerMonth/5

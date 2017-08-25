@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using WebAPI.Interfaces;
+using WebAPI.Models;
+using WebAPI.Services;
 
 namespace WebAPI
 {
@@ -29,6 +32,9 @@ namespace WebAPI
         {
             // Add framework services.
             services.AddMvc();
+
+            // Register application services.
+            services.AddScoped<IReadModelService, PaymentsByCustomerByDateService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
