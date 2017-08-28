@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Newtonsoft.Json;
 using ReadModel;
 using ReadModel.Models;
@@ -9,13 +10,13 @@ namespace Persistence
     {
         private static readonly JsonSerializer Serializer = new JsonSerializer();
         public string Path { get; }
-        public long WritePageSize { get; }
+        private readonly long _writePageSize;
         private long _processed;
 
         public ModelStore(string path, long writePageSize)
         {
             Path = path;
-            WritePageSize = writePageSize;
+            _writePageSize = writePageSize;
             _processed = 0;
         }
 
@@ -28,7 +29,7 @@ namespace Persistence
             // TODO: Add logic to deal with default WritePageSize == 0.
             // Should only write when model fully populated.
             _processed++;
-            if (_processed > WritePageSize)
+            if (_processed > _writePageSize)
             {
                 Directory.CreateDirectory(Path);
                 var filepath = System.IO.Path.Combine(Path, model.Filename);
@@ -45,28 +46,31 @@ namespace Persistence
         }
 
         /// <summary>
-        /// Deserializes model from json file.
+        /// Deserializes model from json file. Handles resuming by checking if file exists.
+        /// If it does, generate model from file, else return new, empty instance of T.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="filename"></param>
         /// <returns></returns>
         public T Read<T>(string filename)
         {
-            var filepath = System.IO.Path.Combine(Path, filename);
-            using (var file = File.OpenText(filepath))
+            // Resume from json if file exists
+            if (FileExists(filename))
             {
-                if (!File.Exists(filepath))
+                var filepath = System.IO.Path.Combine(Path, filename);
+                using (var file = File.OpenText(filepath))
                 {
-                    throw new FileNotFoundException(filepath);
-                }
-                using (var reader = new JsonTextReader(file))
-                {
-                    return Serializer.Deserialize<T>(reader);
+                    using (var reader = new JsonTextReader(file))
+                    {
+                        return Serializer.Deserialize<T>(reader);
+                    }
                 }
             }
+            // Otherwise return a new instance, starts from sequenceId 1.
+            return (T) Activator.CreateInstance(typeof(T), filename);
         }
 
-        public bool IsFileExists(string filename)
+        private bool FileExists(string filename)
         {
             return File.Exists(System.IO.Path.Combine(Path, filename));
         }

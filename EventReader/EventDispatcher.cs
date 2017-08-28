@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
-using ReadModel.Events;
+﻿using ReadModel.Events;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace EventReader
 {

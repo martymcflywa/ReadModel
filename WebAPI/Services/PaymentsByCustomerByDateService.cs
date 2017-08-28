@@ -50,8 +50,7 @@ namespace WebAPI.Services
 
         private Dictionary<DateTime, MonthlyResult> GetResults()
         {
-            var resumeFrom = _processor.Resume();
-            _dispatcher.Dispatch(_source.Read(resumeFrom));
+            _dispatcher.Dispatch(_source.Read(_processor.InitSequenceId));
             return _processor.GetHighestPayingCustomers();
         }
     }

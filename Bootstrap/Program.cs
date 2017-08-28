@@ -10,7 +10,7 @@ namespace Bootstrap
     public class Program
     {
         private const string ConnectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
-        private const string Path = @"C:\Users\martin.ponce\Documents\dev\projects\ReadModel\Samples";
+        private const string Path = @"C:\source\ReadModel\Samples";
         private const int WritePageSize = 70000;
 
         public static void Main()
@@ -20,9 +20,8 @@ namespace Bootstrap
             var dispatcher = new EventDispatcher();
             var processor = new PaymentsByCustomerByDateProcessor(modelStore);
 
-            var resumeFrom = processor.ResumeFrom;
             processor.Register(dispatcher);
-            dispatcher.Dispatch(source.Read(resumeFrom));
+            dispatcher.Dispatch(source.Read(processor.InitSequenceId));
 
             PrintWinners(processor.GetHighestPayingCustomers());
         }

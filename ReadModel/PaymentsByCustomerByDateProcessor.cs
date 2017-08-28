@@ -8,24 +8,17 @@ namespace ReadModel
     public class PaymentsByCustomerByDateProcessor
     {
         private readonly IPersist _modelStore;
-        private PaymentsByCustomerByDateModel _model;
+        private readonly PaymentsByCustomerByDateModel _model;
+        public long InitSequenceId { get; }
         private const string Filename = "PaymentsByCustomerByDate.json";
-        public long ResumeFrom { get; }
+
         
         public PaymentsByCustomerByDateProcessor(IPersist modelStore)
         {
             _modelStore = modelStore;
-            ResumeFrom = Resume();
-        }
-
-        public long Resume()
-        {
-            // TODO: put this logic in Read()
-            _model = _modelStore.IsFileExists(Filename)
-                ? _modelStore.Read<PaymentsByCustomerByDateModel>(Filename)
-                : new PaymentsByCustomerByDateModel(Filename);
-
-            return _model.CurrentSequenceId;
+            // Resume logic wrapped in _modelStore.Read()
+            _model = _modelStore.Read<PaymentsByCustomerByDateModel>(Filename);
+            InitSequenceId = _model.CurrentSequenceId;
         }
 
         public void Register(IEventRegister register)

@@ -41,7 +41,7 @@ namespace ReadModelTest
             }
         }
 
-        [Fact(Skip = "Used for debugging Events from Sql.")]
+        [Fact (Skip = "Used for debugging Events from Sql.")]
         public void GetHighestPayingCustomers_UsingSqlSource()
         {
             const string connectionString = @"Server=AUPERPSVSQL07;Database=EventHub.OnPrem;Trusted_Connection=True;";
@@ -53,9 +53,8 @@ namespace ReadModelTest
             var dispatcher = new EventDispatcher();
             var processor = new PaymentsByCustomerByDateProcessor(modelStore);
 
-            var start = processor.ResumeFrom;
             processor.Register(dispatcher);
-            dispatcher.Dispatch(source.Read(start));
+            dispatcher.Dispatch(source.Read(processor.InitSequenceId));
             // break here just to check
             var winners = processor.GetHighestPayingCustomers();
         }
@@ -103,9 +102,8 @@ namespace ReadModelTest
             var dispatcher = new EventDispatcher();
             var processor = new PaymentsByCustomerByDateProcessor(modelStore);
 
-            var start = processor.ResumeFrom;
             processor.Register(dispatcher);
-            dispatcher.Dispatch(source.Read(start));
+            dispatcher.Dispatch(source.Read(processor.InitSequenceId));
             var winners = processor.GetHighestPayingCustomers();
         }
 
